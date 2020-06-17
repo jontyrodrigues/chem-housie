@@ -11,7 +11,7 @@ This is an program written in javascript and HTMl for compatibility with various
 
 Just open the file in any web browser when the ticket is generated a print option will appear, select print to PDF and scale until the ticket fits into the page, this is done so that it is cross comptable with mobile as well as PC and maintain the simplicity of the code. FPDF and other didn't seem to be work properly at the time i wrote the code hence it is not being used.
 
-<h4> Number Generator </h4>
+<h4>Chemical Symbol Generator </h4>
 
 This program calls a random chemical symbol form a list of chemical symbol and then marks the chemical symbol that had already been called
 
