@@ -17,4 +17,14 @@ This program calls a random chemical symbol form a list of chemical symbol and t
 
 <h5> Usage </h5>
 
-Open the program in a web browser and use the button provided to generate a random chemical symbol, NOTE: Do not refresh the page or the page will reload and you will loose all the progress. The new verison with autosave feature is comping soon. This program is optimised for PC. 
+Open the program in a web browser and use the button provided to generate a random chemical symbol, NOTE: Do not refresh the page or the page will reload and you will loose all the progress. The new verison with autosave feature is coming soon. This program is optimised for PC. 
+
+
+<h5> V2 Update </h5>
+
+The new v2 version of the random symbol generator now includes an autosave feature when a symbol is generated it is automatically saved in the localstorage, so if the page closes or is refreshed the symbol will remain as is. To reset the game click reset button before you resetting a popup will ask you wether you want to reset or no.
+
+<h5> Keyboard Shortcut </h5>
+
+p - for symbol generator<br>
+r - reset
