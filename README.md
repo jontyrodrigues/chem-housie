@@ -21,5 +21,5 @@ The new v2 version of the random symbol generator now includes an autosave featu
 
 <h5> Keyboard Shortcut </h5>
 
-p - for symbol generator
+p - for symbol generator<br>
 r - reset
