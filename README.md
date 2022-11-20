@@ -32,7 +32,7 @@ r - reset
 
 <h5> V3 Update </h5>
 
-Apart from all the features in the V2 Update the V3 Update supports undo and redo functionality as well as texttospeech functionality.
+Apart from all the features in the V2 Update the V3 Update supports undo and redo functionality as well as texttospeech functionality. Also Added functionality to display the symbol and element and change the table to display : numbers, symbols or names of element
 
 <h5> Keyboard Shortcut </h5>
 
