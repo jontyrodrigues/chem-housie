@@ -9,7 +9,7 @@ This is an program written in javascript and HTMl for compatibility with various
 
 <h5> Usage </h5>
 
-Just open the file in any web browser when the ticket is generated a print option will appear, select print to PDF and scale until the ticket fits into the page, this is done so that it is cross comptable with mobile as well as PC and maintain the simplicity of the code. FPDF and other didn't seem to be work properly at the time i wrote the code hence it is not being used.
+Just open the file in any web browser it will prompt you to ask the no of pages to be generated, when the ticket is generated a print option will appear, select print to PDF and scale until the ticket fits into the page, this is done so that it is cross comptable with mobile as well as PC and maintain the simplicity of the code.
 
 <h4>Chemical Symbol Generator </h4>
 
