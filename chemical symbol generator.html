@@ -135,7 +135,6 @@
 					let utterance = new SpeechSynthesisUtterance(namesArray[x]);
 					utterance.rate = 0.50;
 					utterance.pitch = 1.85;
-					utterance.voice = getVoices()[2];
 					speechSynthesis.speak(utterance);
 					speechSynthesis.speak(utterance);
 					document.getElementById("no").innerHTML = symbolArray[x];
