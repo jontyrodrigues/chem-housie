@@ -37,7 +37,7 @@ Apart from all the features in the V2 Update the V3 Update supports undo and red
 <h5> Keyboard Shortcut </h5>
 
 p - for symbol generator<br>
-r - reset
-z - undo
-y - redo
-o - repeat current symbol
+r - reset<br>
+z - undo<br>
+y - redo<br>
+o - repeat current symbol<br>
