@@ -40,3 +40,4 @@ p - for symbol generator<br>
 r - reset
 z - undo
 y - redo
+o - repeat current symbol

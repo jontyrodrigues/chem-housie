@@ -51,8 +51,18 @@
 				else if (key == 89) {
 					redo()
 				}
+				else if(key == 79){
+					repeatCurrentSymbol();
+				}
 			}
 		};
+
+		function repeatCurrentSymbol(){
+			utterance = new SpeechSynthesisUtterance(namesArray[historyArray[historyArray.length - 1]]);
+			utterance.rate = 0.50;
+			utterance.pitch = 1.85;
+			speechSynthesis.speak(utterance);
+		}
 
 		body.onkeyup = function () {
 			fired = false;
@@ -159,6 +169,8 @@
 		style="border-radius: 5px; background-color: #ada118; border: none; color: white; padding: 15px 32px; text-align:center; text-decoration: none; display: inline-block; font-size: 16px;">Undo</button>
 	<button onclick="redo()"
 		style="border-radius: 5px; background-color: #0033ff; border: none; color: white; padding: 15px 32px; text-align:center; text-decoration: none; display: inline-block; font-size: 16px;">Redo</button>
+		<button onclick="repeatCurrentSymbol()"
+		style="border-radius: 5px; background-color: #38bbc0; border: none; color: white; padding: 15px 32px; text-align:center; text-decoration: none; display: inline-block; font-size: 16px;">Repeat</button>
 
 	<div style="width: 100%; display: table;">
 		<div style="display: table-row;">
