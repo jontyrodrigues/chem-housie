@@ -28,3 +28,15 @@ The new v2 version of the random symbol generator now includes an autosave featu
 
 p - for symbol generator<br>
 r - reset
+
+
+<h5> V3 Update </h5>
+
+Apart from all the features in the V2 Update the V3 Update supports undo and redo functionality as well as texttospeech functionality.
+
+<h5> Keyboard Shortcut </h5>
+
+p - for symbol generator<br>
+r - reset
+z - undo
+y - redo
