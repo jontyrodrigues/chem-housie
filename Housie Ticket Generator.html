@@ -1,6 +1,34 @@
 <!--Copyright Jonty Rodrigues jonty.rodrigues007@gmail.com-->
 <html>
 
+<head>
+
+	<style>
+		/* when !! in the element */
+		td:empty {
+			background-color: white;
+		}
+
+		.numberz{
+			border: 1px solid black;
+			font-size: 30px;
+			width: 40px;
+			height: 40px;
+			text-align: center;
+		}
+
+		.ticket{
+			border: black 1px solid;
+			padding: 5px;
+		}
+
+		.ticket-header{
+			font-size: 20px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+
 <body>
 	<script>
 		function make() {
@@ -13,24 +41,38 @@
 				no_of_tables = no_of_tables + 2;
 				if(i == 1){
 				document.getElementById("tabs").innerHTML = document.getElementById("tabs").innerHTML + `
-				<div style="width: 30%; display: table;">
-					<div style="display: table-row">
-						<div id="table${no_of_tables - 1}" style="width: 600px; display: table-cell;"></div>
-						<div id="table${no_of_tables}" style="display: table-cell;"></div>
+				<div style="width: 30%;">
+					<div style="display:flex">
+						<div id="table${no_of_tables - 1}" style="width: 600px; margin-right:20px"></div>
+						<div id="table${no_of_tables}"></div>
 					</div>
 				</div>`;
 				}else{
 				document.getElementById("tabs").innerHTML = document.getElementById("tabs").innerHTML + `
-				<div style="width: 30%; display: table; margin-top: 63px;">
-					<div style="display: table-row">
-						<div id="table${no_of_tables - 1}" style="width: 600px; display: table-cell;"></div>
-						<div id="table${no_of_tables}" style="display: table-cell;"></div>
+				<div style="width: 30%; margin-top: 63px;">
+					<div style="display:flex">
+						<div id="table${no_of_tables - 1}" style="width: 600px; margin-right:20px"></div>
+						<div id="table${no_of_tables}"></div>
 					</div>
 				</div>
 			`;
 			}
 				document.getElementById(`table${no_of_tables - 1}`).innerHTML = getTableHTML(generate());
 				document.getElementById(`table${no_of_tables}`).innerHTML = getTableHTML(generate());
+			}
+			// replace !! with space
+			var elements = document.getElementsByClassName("numberz");
+			for (var i = 0; i < elements.length; i++) {
+				if (elements[i].innerHTML == "!!") {
+					elements[i].innerHTML = " ";
+					elements[i].style.backgroundColor = "white";
+					elements[i].style.color = "white";
+					// make the border white
+					elements[i].style.border = "1px solid white";
+					// make the size of the element 3px
+					elements[i].style.width = "10px";
+					elements[i].style.height = "10px";
+				}
 			}
 			window.print();
 		}
@@ -143,20 +185,32 @@
 		}
 
 		function getTableHTML(arrB) {
-			var result = "<table border=1>";
+			var result = "<div border=0>";
+			ticketNo = 1;
 			for (var i = 0; i < arrB.length; i++) {
-				result += "<tr>";
+				// if the row is 1, 6, 11, 16, 21, 26 then we also add a horizontal line
+				if (i == 0 || i == 5 || i == 10 || i == 15 || i == 20 || i == 25) {
+					result += "<div class='ticket'>";
+					result += "<span class='ticket-header'> Ticket no " + ticketNo + "</span>";
+					ticketNo++;
+				}
+				result += "<div style='display:flex;'>";
 				for (var j = 0; j < arrB[i].length; j++) {
 					if (arrB[i][j] == "J") {
-						result += "<td>" + ' ' + "</td>";
+						result += "<span class='numberz'>" + ' ' + "</span>";
 					}
 					else {
-						result += "<td>" + arrB[i][j] + "</td>";
+						result += "<span class='numberz'>" + arrB[i][j] + "</span>";
 					}
 				}
-				result += "</tr>";
+				// if the row is 4, 9, 14, 19, 24, 29 then we also add a horizontal line
+				result += "</div>";
+				if(i == 2 || i == 7 || i == 12 || i == 17 || i == 22 || i == 27){
+					result += "</div>";
+				}
 			}
-			result += "</table>";
+			result += "</div>";
+			console.log(result);
 			return result;
 		}
 
