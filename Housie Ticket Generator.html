@@ -31,6 +31,7 @@
 
 <body>
 	<script>
+		var ticketNo = 1;
 		function make() {
 			var no_of_pages = prompt("No Of pages to print",5);
 			if(isNaN(no_of_pages)){
@@ -65,13 +66,13 @@
 			for (var i = 0; i < elements.length; i++) {
 				if (elements[i].innerHTML == "!!") {
 					elements[i].innerHTML = " ";
-					elements[i].style.backgroundColor = "white";
-					elements[i].style.color = "white";
-					// make the border white
-					elements[i].style.border = "1px solid white";
-					// make the size of the element 3px
-					elements[i].style.width = "10px";
-					elements[i].style.height = "10px";
+					// elements[i].style.backgroundColor = "white";
+					// elements[i].style.color = "white";
+					// // make the border white
+					elements[i].style.border = "none";
+					// // make the size of the element 3px
+					elements[i].style.width = "15px";
+					elements[i].style.height = "15px";
 				}
 			}
 			window.print();
@@ -186,7 +187,7 @@
 
 		function getTableHTML(arrB) {
 			var result = "<div border=0>";
-			ticketNo = 1;
+			// ticketNo = 1;
 			for (var i = 0; i < arrB.length; i++) {
 				// if the row is 1, 6, 11, 16, 21, 26 then we also add a horizontal line
 				if (i == 0 || i == 5 || i == 10 || i == 15 || i == 20 || i == 25) {
