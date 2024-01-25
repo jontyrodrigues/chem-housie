@@ -41,3 +41,7 @@ r - reset<br>
 z - undo<br>
 y - redo<br>
 o - repeat current symbol<br>
+
+<h5> Online </h5>
+You can visit [ticket-gen](https://jontyrodrigues.github.io/chem-housie/ticket) to generate tickets.
+You can visit [number-caller](https://jontyrodrigues.github.io/chem-housie) for the number caller.
