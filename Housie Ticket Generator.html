@@ -1,225 +1,468 @@
+<!DOCTYPE html>
 <!--Copyright Jonty Rodrigues jonty.rodrigues007@gmail.com-->
-<html>
+<html lang="en">
 
 <head>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Chem Housie Tickets</title>
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d7c66'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-weight='700' font-size='16' fill='white' text-anchor='middle'%3EAu%3C/text%3E%3C/svg%3E">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<style>
-		/* when !! in the element */
-		td:empty {
-			background-color: white;
+		:root {
+			--bg: #e9e6de;
+			--surface: #ffffff;
+			--surface-2: #ebe8df;
+			--text: #1c1b18;
+			--muted: #6a675e;
+			--line: #dcd8cc;
+			--accent: #0d7c66;
+			--accent-ink: #ffffff;
+			color-scheme: light;
 		}
 
-		.numberz{
-			border: 1px solid black;
-			font-size: 30px;
-			width: 40px;
-			height: 40px;
-			text-align: center;
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--bg: #111110;
+				--surface: #1b1b19;
+				--surface-2: #272623;
+				--text: #f1efe8;
+				--muted: #a29e93;
+				--line: #34332f;
+				--accent: #34c6a1;
+				--accent-ink: #062720;
+				color-scheme: dark;
+			}
 		}
 
-		.ticket{
-			border: black 1px solid;
-			padding: 5px;
+		:root[data-theme="dark"] {
+			--bg: #111110;
+			--surface: #1b1b19;
+			--surface-2: #272623;
+			--text: #f1efe8;
+			--muted: #a29e93;
+			--line: #34332f;
+			--accent: #34c6a1;
+			--accent-ink: #062720;
+			color-scheme: dark;
 		}
 
-		.ticket-header{
-			font-size: 20px;
-			font-weight: bold;
+		* { box-sizing: border-box; }
+
+		html, body { margin: 0; }
+
+		body {
+			background: var(--bg);
+			color: var(--text);
+			font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+			min-height: 100vh;
+		}
+
+		button, input { font: inherit; color: inherit; }
+
+		.layout { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
+
+		/* ---------- controls ---------- */
+		.sidebar {
+			background: var(--surface);
+			border-right: 1px solid var(--line);
+			padding: 22px;
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			overflow-y: auto;
+		}
+
+		.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+		.brand-tile { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-size: 15px; position: relative; }
+		.brand-tile small { position: absolute; top: 2px; left: 4px; font-size: 7px; opacity: .8; }
+		.brand a { margin-left: auto; font-size: 13px; font-weight: 500; color: var(--muted); }
+
+		.field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500; }
+		.field small { color: var(--muted); font-weight: 400; line-height: 1.4; }
+		.row { display: flex; gap: 8px; }
+		.row > * { flex: 1; min-width: 0; }
+
+		.input {
+			height: 42px;
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			padding: 0 12px;
+			background: var(--bg);
+			width: 100%;
+		}
+
+		.input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+		.input.code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 18px; letter-spacing: .1em; text-transform: uppercase; }
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			height: 42px;
+			padding: 0 14px;
+			border-radius: 10px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+			cursor: pointer;
+			font-weight: 600;
+			flex: none;
+		}
+
+		.btn:hover { background: var(--surface-2); }
+		.btn:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+		.btn-primary { height: 54px; font-size: 18px; background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+		.btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, var(--text)); }
+
+		svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+		.seg { display: flex; padding: 3px; gap: 2px; background: var(--surface-2); border-radius: 10px; }
+		.seg button { flex: 1; border: 0; background: transparent; padding: 7px 6px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); }
+		.seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgb(0 0 0 / .12); }
+
+		.summary { padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); font-size: 14px; line-height: 1.5; }
+		.summary b { font-size: 22px; display: block; }
+
+		.note { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+		.note b { color: var(--text); font-weight: 600; }
+
+		/* ---------- preview ---------- */
+		.preview { padding: 28px; overflow: hidden; }
+		.sheets { display: flex; flex-direction: column; align-items: center; gap: 28px; zoom: var(--zoom, 1); }
+
+		/*
+		 * Everything inside a sheet is in mm so the print is exact. A sheet is one A4 page;
+		 * the block of tickets is centred on it so the margins match on every side.
+		 */
+		.sheet {
+			width: 210mm;
+			height: 297mm;
+			padding: 0 8mm;
+			background: #fff;
+			color: #1a1a1a;
+			box-shadow: 0 2px 4px rgb(0 0 0 / .08), 0 18px 40px rgb(0 0 0 / .14);
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			position: relative;
+			overflow: hidden;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		/* Dashed cutting guides: each ticket sits in its own box, and the lines run edge to edge */
+		.cuts { --cut: .25mm dashed #9a978f; display: grid; grid-template-columns: 1fr 1fr; position: relative; }
+		.cuts.single { grid-template-columns: 97mm; justify-content: center; }
+		.slot { padding: 3mm; border-right: var(--cut); border-bottom: var(--cut); }
+		.slot:nth-of-type(odd) { border-left: var(--cut); }
+		.slot:nth-of-type(-n+2) { border-top: var(--cut); }
+		.cuts.single .slot { border-left: var(--cut); }
+		.cuts.single .slot:nth-of-type(2) { border-top: 0; }
+		.no-cuts .cuts { --cut: .25mm solid transparent; }
+
+		.scissors { position: absolute; top: 0; left: 6mm; transform: translateY(-52%); background: #fff; padding: 0 1mm; font-size: 4mm; line-height: 1; color: #77746c; }
+		.no-cuts .scissors { display: none; }
+
+		.ticket { border: .5mm solid #1a1a1a; border-radius: 2.4mm; padding: 1.6mm 2mm 2mm; }
+
+		.ticket-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.4mm; font-size: 3mm; line-height: 1; }
+		.ticket-head .title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 2mm; }
+		.ticket-head .id { font-weight: 700; font-size: 3.2mm; white-space: nowrap; }
+		.ticket-head .id code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 2.6mm; font-weight: 600; color: #666; margin-left: 1.5mm; letter-spacing: .03em; }
+
+		.grid { display: grid; grid-template-columns: repeat(9, 1fr); border-top: .3mm solid #1a1a1a; border-left: .3mm solid #1a1a1a; }
+
+		.cell {
+			--c: #1a1a1a;
+			aspect-ratio: 1;
+			border-right: .3mm solid #1a1a1a;
+			border-bottom: .3mm solid #1a1a1a;
+			position: relative;
+			display: grid;
+			place-items: center;
+			font-weight: 700;
+			font-size: 4.6mm;
+			line-height: 1;
+		}
+
+		.cell .z { position: absolute; top: .5mm; left: .7mm; font-size: 1.9mm; font-weight: 500; }
+		.cell .n { position: absolute; bottom: .55mm; left: 0; right: 0; text-align: center; font-size: 1.45mm; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; }
+		.cell .n.long { font-size: 1.2mm; }
+		.label-name .cell .s { margin-top: -1.4mm; }
+
+		.cell.blank { background: repeating-linear-gradient(135deg, #eeece6 0 .8mm, #fff .8mm 1.6mm); }
+
+		.colour .cell:not(.blank) { background: color-mix(in srgb, var(--c) 13%, #fff); color: color-mix(in srgb, var(--c) 80%, #000); }
+		.colour .cell .z, .colour .cell .n { color: #333; }
+		.ink .cell.blank { background: #fff; }
+
+		.sheet-foot { position: absolute; left: 8mm; right: 8mm; bottom: 7mm; display: flex; justify-content: space-between; font-size: 2.6mm; color: #777; }
+
+		@page { size: A4 portrait; margin: 0; }
+
+		@media print {
+			html, body { background: #fff; }
+			.layout { display: block; min-height: 0; }
+			.sidebar { display: none; }
+			/* overflow must be visible here, or Chrome pushes a blank page after every sheet */
+			.preview { padding: 0; overflow: visible; }
+			.sheets { zoom: 1 !important; gap: 0; display: block; }
+			.sheet { box-shadow: none; break-after: page; }
+			.sheet:last-child { break-after: auto; }
+		}
+
+		@media (max-width: 860px) {
+			.layout { grid-template-columns: 1fr; }
+			.sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+			.preview { padding: 16px; }
+			.sheets { gap: 16px; }
 		}
 	</style>
 </head>
 
 <body>
-	<script>
-		var ticketNo = 1;
-		function make() {
-			var no_of_pages = prompt("No Of pages to print",5);
-			if(isNaN(no_of_pages)){
-				no_of_pages = 5;
-			}
-			no_of_tables = 0
-			for (var i = 1; i <= no_of_pages; i++) {
-				no_of_tables = no_of_tables + 2;
-				if(i == 1){
-				document.getElementById("tabs").innerHTML = document.getElementById("tabs").innerHTML + `
-				<div style="width: 30%;">
-					<div style="display:flex">
-						<div id="table${no_of_tables - 1}" style="width: 600px; margin-right:20px"></div>
-						<div id="table${no_of_tables}"></div>
-					</div>
-				</div>`;
-				}else{
-				document.getElementById("tabs").innerHTML = document.getElementById("tabs").innerHTML + `
-				<div style="width: 30%; margin-top: 63px;">
-					<div style="display:flex">
-						<div id="table${no_of_tables - 1}" style="width: 600px; margin-right:20px"></div>
-						<div id="table${no_of_tables}"></div>
-					</div>
+	<div class="layout">
+		<aside class="sidebar">
+			<div class="brand"><span class="brand-tile"><small>79</small>Au</span>Ticket printer<a href="chemical%20symbol%20generator.html">Caller →</a></div>
+
+			<label class="field">Event title
+				<input class="input" id="title" maxlength="40">
+			</label>
+
+			<label class="field">Game code
+				<span class="row">
+					<input class="input code" id="code" maxlength="8" spellcheck="false" autocomplete="off">
+					<button class="btn" id="newCode" title="New random code"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/></svg>New</button>
+				</span>
+				<small>The same code always prints the same tickets. Keep it to reprint or to check claims in the caller.</small>
+			</label>
+
+			<div class="row">
+				<label class="field">Strips
+					<input class="input" id="strips" type="number" min="1" max="100">
+				</label>
+				<label class="field">Starting at strip
+					<input class="input" id="first" type="number" min="1" max="9999">
+				</label>
+			</div>
+
+			<div class="summary" id="summary"></div>
+
+			<div class="field">Each cell shows
+				<div class="seg" data-group="label">
+					<button data-value="symbol">Symbol</button>
+					<button data-value="number">+ Number</button>
+					<button data-value="name">+ Name</button>
 				</div>
-			`;
+			</div>
+
+			<div class="field">Printing
+				<div class="seg" data-group="ink">
+					<button data-value="colour">Colour by group</button>
+					<button data-value="ink">Ink saver</button>
+				</div>
+			</div>
+
+			<div class="field">Cutting guides
+				<div class="seg" data-group="cuts">
+					<button data-value="on">Dashed lines</button>
+					<button data-value="off">None</button>
+				</div>
+			</div>
+
+			<div class="field">Ticket label
+				<div class="seg" data-group="label2">
+					<button data-value="number">Number only</button>
+					<button data-value="code">Number + code</button>
+				</div>
+				<small>Anyone who knows the game code can recreate every ticket, so leave it off unless players need to check tickets themselves. The caller can check claims by number.</small>
+			</div>
+
+			<button class="btn btn-primary" id="printBtn"><svg class="i" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print tickets</button>
+
+			<p class="note">Prints on <b>A4</b> with 12 tickets per page. Choose <b>Save as PDF</b> to share them digitally. Each strip of 6 tickets uses all 90 elements exactly once.</p>
+		</aside>
+
+		<main class="preview">
+			<div class="sheets" id="sheets"></div>
+		</main>
+	</div>
+
+	<script src="housie-core.js"></script>
+	<script>
+		var H = window.ChemHousie;
+		var EL = H.ELEMENTS;
+
+		function load(key, fallback) {
+			try {
+				var value = JSON.parse(localStorage.getItem(key));
+				return value == null ? fallback : value;
+			} catch (e) {
+				return fallback;
 			}
-				document.getElementById(`table${no_of_tables - 1}`).innerHTML = getTableHTML(generate());
-				document.getElementById(`table${no_of_tables}`).innerHTML = getTableHTML(generate());
-			}
-			// replace !! with space
-			var elements = document.getElementsByClassName("numberz");
-			for (var i = 0; i < elements.length; i++) {
-				if (elements[i].innerHTML == "!!") {
-					elements[i].innerHTML = " ";
-					// elements[i].style.backgroundColor = "white";
-					// elements[i].style.color = "white";
-					// // make the border white
-					elements[i].style.border = "none";
-					// // make the size of the element 3px
-					elements[i].style.width = "15px";
-					elements[i].style.height = "15px";
-				}
-			}
-			window.print();
-		}
-		function generate() {
-
-			/*Define arr0 - this array conatins the symbols of the atoms in order according to their atomic number "J" is kept as an placeholder for the first array as it contains only 9 charecters for the last column as it is 11 charecters a special loop is called for it, once the symbol is called once it must not be repeated hence it is replaced with "J" when the code encounters "J" it ignores it hence it is a check so as no symbols are repeated and all the symbols are used*/
-
-			var arr0 = [["J", "H", "He", "Li", "Be", "B", "C", "N", "O", "F"], ["Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K"], ["Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu"], ["Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y"]
-				, ["Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In"], ["Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr"], ["Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm"], ["Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au"]
-				, ["Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th"]];
-
-
-			/*Define the ticket pattern -  Here ArrA is a three dimensional array the 1st order contains 6 of the possible arrangement of numbers the 2nd order of the array contains the columns and the third order contains the row if you would like to add your own predefined arrangement other than the six given below you can do so by by adding the adding a new 2 dimensional array in the array ArrA, here each array in the 2D array is a column and contains 28 charecters "!!" are intended as spaces for the tickets "J" is the charecter which will be converted to space and "1" is the place where the random number will appear*/
-
-
-			var arrA =
-				[[["J", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1"]
-					, ["1", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J"]
-					, ["J", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1"]
-					, ["1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "J"]
-					, ["J", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "1", "J"]
-					, ["J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "J", "1"]
-					, ["1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1"]
-					, ["1", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J"]
-					, ["1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1"]],
-				[["J", "1", "J", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1"]
-					, ["1", "J", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J"]
-					, ["J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1"]
-					, ["J", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "J"]
-					, ["1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "J", "J"]
-					, ["1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J"]
-					, ["1", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "J", "1"]
-					, ["J", "1", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1"]
-					, ["1", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1"]],
-				[["1", "J", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J"]
-					, ["1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "1", "J"]
-					, ["J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "J"]
-					, ["1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "J", "1"]
-					, ["J", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1"]
-					, ["1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "1", "J"]
-					, ["1", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "J", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1"]
-					, ["J", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1"]
-					, ["J", "1", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1"]],
-				[["J", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "1", "1"]
-					, ["1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "J"]
-					, ["J", "1", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1"]
-					, ["1", "J", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1"]
-					, ["J", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J"]
-					, ["1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1"]
-					, ["J", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "J"]
-					, ["1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1"]
-					, ["1", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J"]],
-				[["J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "J", "1"]
-					, ["1", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "J"]
-					, ["1", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1"]
-					, ["J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "J", "1"]
-					, ["J", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1"]
-					, ["J", "1", "J", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "J", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "1", "J"]
-					, ["1", "1", "J", "!!", "!!", "J", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "1", "1", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1"]
-					, ["1", "J", "1", "!!", "!!", "1", "J", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J"]
-					, ["1", "J", "J", "!!", "!!", "1", "J", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "J", "1", "1", "!!", "!!", "1", "1", "J"]]];
-
-			/* arrB is an array which is passed onto the HTML parser via HTMl the array is initialised as "1" so as to know wether the array is filled with symbols or not if it is then it will contain either "J", "!!" or other chemical symbol*/
-
-			var arrB = [["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"],
-			["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"]
-				, ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"],
-			["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"]
-				, ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"], ["1", "1", "1", "1", "1", "1", "1", "1", "1"]];
-
-			/*loop called for the first 8 column*/
-
-			var v = Math.floor((Math.random() * 5));
-			for (var i = 0; i < 8; i++) {
-				for (var j = 0; j < 28; j++) {
-					if (arrA[v][i][j] == "1") {
-						while (true) {
-							var x = Math.floor((Math.random() * 10));
-							if (arr0[i][x] != "J") {
-								arrA[v][i][j] = arr0[i][x];
-								arr0[i][x] = "J";
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			/*loop called for the final column*/
-
-			for (var j = 0; j < 28; j++) {
-				if (arrA[v][8][j] == "1") {
-					while (true) {
-						var x = Math.floor((Math.random() * 11));
-						if (arr0[8][x] != "J") {
-							arrA[v][8][j] = arr0[8][x];
-							arr0[8][x] = "J";
-							break;
-						}
-					}
-				}
-			}
-			for (var i = 0; i < 28; i++) {
-				for (var j = 0; j < 9; j++) {
-					arrB[i][j] = arrA[v][j][i];
-				}
-
-			}
-			return arrB;
 		}
 
-		function getTableHTML(arrB) {
-			var result = "<div border=0>";
-			// ticketNo = 1;
-			for (var i = 0; i < arrB.length; i++) {
-				// if the row is 1, 6, 11, 16, 21, 26 then we also add a horizontal line
-				if (i == 0 || i == 5 || i == 10 || i == 15 || i == 20 || i == 25) {
-					result += "<div class='ticket'>";
-					result += "<span class='ticket-header'> Ticket no " + ticketNo + "</span>";
-					ticketNo++;
-				}
-				result += "<div style='display:flex;'>";
-				for (var j = 0; j < arrB[i].length; j++) {
-					if (arrB[i][j] == "J") {
-						result += "<span class='numberz'>" + ' ' + "</span>";
-					}
-					else {
-						result += "<span class='numberz'>" + arrB[i][j] + "</span>";
-					}
-				}
-				// if the row is 4, 9, 14, 19, 24, 29 then we also add a horizontal line
-				result += "</div>";
-				if(i == 2 || i == 7 || i == 12 || i == 17 || i == 22 || i == 27){
-					result += "</div>";
-				}
-			}
-			result += "</div>";
-			console.log(result);
-			return result;
+		function save(key, value) {
+			try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { }
 		}
 
+		function escapeHTML(text) {
+			return String(text).replace(/[&<>"]/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]; });
+		}
+
+		function clampInt(value, min, max, fallback) {
+			var n = parseInt(value, 10);
+			return isNaN(n) ? fallback : Math.max(min, Math.min(max, n));
+		}
+
+		var settings = Object.assign({
+			title: 'Chem Housie',
+			code: H.randomCode(),
+			strips: 4,
+			first: 1,
+			label: 'number',
+			ink: 'colour',
+			cuts: 'on',
+			label2: 'number'
+		}, load('chem-housie-tickets', {}));
+
+		function cellHTML(z) {
+			if (!z) return '<div class="cell blank"></div>';
+			var el = EL[z - 1];
+			var html = '<span class="s">' + el.symbol + '</span>';
+			if (settings.label !== 'symbol') html += '<span class="z">' + z + '</span>';
+			if (settings.label === 'name') html += '<span class="n' + (el.name.length > 9 ? ' long' : '') + '">' + el.name + '</span>';
+			return '<div class="cell" style="--c:' + H.CATEGORIES[el.category].color + '">' + html + '</div>';
+		}
+
+		function ticketHTML(ticket) {
+			return '<div class="slot"><div class="ticket">' +
+				'<div class="ticket-head"><span class="title">' + escapeHTML(settings.title) + '</span>' +
+				'<span class="id">No. ' + ticket.number + (settings.label2 === 'code' ? '<code>' + ticket.id + '</code>' : '') + '</span></div>' +
+				'<div class="grid">' + ticket.grid.map(function (row) { return row.map(cellHTML).join(''); }).join('') + '</div>' +
+				'</div></div>';
+		}
+
+		function render() {
+			var code = settings.code.trim().toUpperCase() || 'CHEM';
+			var strips = [];
+			for (var s = settings.first; s < settings.first + settings.strips; s++) strips.push(H.generateStrip(code, s));
+
+			var pages = [];
+			for (var i = 0; i < strips.length; i += 2) pages.push(strips.slice(i, i + 2));
+
+			document.getElementById('sheets').innerHTML = pages.map(function (pair, p) {
+				var from = pair[0][0].strip, to = pair[pair.length - 1][0].strip;
+				// Each row pairs ticket i of the left strip with ticket i of the right strip
+				var slots = [];
+				for (var t = 0; t < 6; t++) pair.forEach(function (strip) { slots.push(ticketHTML(strip[t])); });
+				return '<section class="sheet ' + settings.ink + ' label-' + settings.label + (settings.cuts === 'off' ? ' no-cuts' : '') + '">' +
+					'<div class="cuts' + (pair.length === 1 ? ' single' : '') + '"><span class="scissors">✂</span>' + slots.join('') + '</div>' +
+					'<div class="sheet-foot"><span>' + escapeHTML(settings.title) +
+					(settings.label2 === 'code' ? ' · game ' + code : '') +
+					' · strip' + (from === to ? ' ' + from : 's ' + from + '–' + to) +
+					(settings.cuts === 'off' ? '' : ' · cut along the dashed lines') + '</span>' +
+					'<span>Page ' + (p + 1) + ' of ' + pages.length + '</span></div>' +
+					'</section>';
+			}).join('');
+
+			var tickets = settings.strips * 6;
+			var lastStrip = settings.first + settings.strips - 1;
+			document.getElementById('summary').innerHTML = '<b>' + tickets + ' tickets</b>' +
+				settings.strips + ' strip' + (settings.strips > 1 ? 's' : '') + ' on ' + pages.length + ' page' + (pages.length > 1 ? 's' : '') +
+				' · ticket no. ' + ((settings.first - 1) * 6 + 1) + '–' + lastStrip * 6;
+
+			document.querySelectorAll('.seg').forEach(function (seg) {
+				seg.querySelectorAll('button').forEach(function (b) {
+					b.setAttribute('aria-pressed', b.dataset.value === settings[seg.dataset.group]);
+				});
+			});
+
+			save('chem-housie-tickets', settings);
+			fitPreview();
+		}
+
+		// Scale the A4 sheets down to fit narrow windows
+		function fitPreview() {
+			var preview = document.querySelector('.preview');
+			var available = preview.clientWidth - parseFloat(getComputedStyle(preview).paddingLeft) * 2;
+			var sheetWidth = 210 * 96 / 25.4;
+			document.getElementById('sheets').style.setProperty('--zoom', Math.min(1, available / sheetWidth).toFixed(3));
+		}
+
+		var titleInput = document.getElementById('title');
+		var codeInput = document.getElementById('code');
+		var stripsInput = document.getElementById('strips');
+		var firstInput = document.getElementById('first');
+
+		titleInput.value = settings.title;
+		codeInput.value = settings.code;
+		stripsInput.value = settings.strips;
+		firstInput.value = settings.first;
+
+		var renderTimer = null;
+		function renderSoon() {
+			clearTimeout(renderTimer);
+			renderTimer = setTimeout(render, 150);
+		}
+
+		titleInput.addEventListener('input', function () {
+			settings.title = titleInput.value;
+			renderSoon();
+		});
+
+		codeInput.addEventListener('input', function () {
+			var clean = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+			if (clean !== codeInput.value) codeInput.value = clean;
+			if (clean.length >= 2) {
+				settings.code = clean;
+				renderSoon();
+			}
+		});
+
+		stripsInput.addEventListener('input', function () {
+			settings.strips = clampInt(stripsInput.value, 1, 100, settings.strips);
+			renderSoon();
+		});
+
+		firstInput.addEventListener('input', function () {
+			settings.first = clampInt(firstInput.value, 1, 9999, settings.first);
+			renderSoon();
+		});
+
+		[stripsInput, firstInput].forEach(function (input) {
+			input.addEventListener('blur', function () {
+				stripsInput.value = settings.strips;
+				firstInput.value = settings.first;
+			});
+		});
+
+		document.getElementById('newCode').onclick = function () {
+			settings.code = H.randomCode();
+			codeInput.value = settings.code;
+			render();
+		};
+
+		document.querySelectorAll('.seg').forEach(function (seg) {
+			seg.addEventListener('click', function (e) {
+				var b = e.target.closest('button');
+				if (!b) return;
+				settings[seg.dataset.group] = b.dataset.value;
+				render();
+			});
+		});
+
+		document.getElementById('printBtn').onclick = function () { window.print(); };
+		window.addEventListener('resize', fitPreview);
+
+		render();
 	</script>
+</body>
 
-	<body onload="make()">
-		<div id="tabs">
-
-		</div>
-	</body>
-	<html>
+</html>

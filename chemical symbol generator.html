@@ -1,438 +1,1312 @@
-<html>
+<!DOCTYPE html>
+<!--Copyright Jonty Rodrigues jonty.rodrigues007@gmail.com-->
+<html lang="en">
 
 <head>
-	<title>
-		Number Caller
-	</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.4/dist/flowbite.min.css" />
-	<script src="https://unpkg.com/flowbite@1.5.4/dist/flowbite.js"></script>
+	<title>Chem Housie Caller</title>
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d7c66'/%3E%3Ctext x='16' y='22' font-family='sans-serif' font-weight='700' font-size='16' fill='white' text-anchor='middle'%3EAu%3C/text%3E%3C/svg%3E">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #f4f2ec;
+			--surface: #ffffff;
+			--surface-2: #ebe8df;
+			--text: #1c1b18;
+			--muted: #6a675e;
+			--line: #dcd8cc;
+			--accent: #0d7c66;
+			--accent-ink: #ffffff;
+			--danger: #b42318;
+			--uncalled-tint: 10%;
+			--shadow: 0 1px 2px rgb(0 0 0 / .06), 0 10px 30px rgb(0 0 0 / .07);
+			--radius: 14px;
+			color-scheme: light;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root:not([data-theme="light"]) {
+				--bg: #111110;
+				--surface: #1b1b19;
+				--surface-2: #272623;
+				--text: #f1efe8;
+				--muted: #a29e93;
+				--line: #34332f;
+				--accent: #34c6a1;
+				--accent-ink: #062720;
+				--danger: #f97066;
+				--uncalled-tint: 18%;
+				--shadow: 0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
+				color-scheme: dark;
+			}
+		}
+
+		:root[data-theme="dark"] {
+			--bg: #111110;
+			--surface: #1b1b19;
+			--surface-2: #272623;
+			--text: #f1efe8;
+			--muted: #a29e93;
+			--line: #34332f;
+			--accent: #34c6a1;
+			--accent-ink: #062720;
+			--danger: #f97066;
+			--uncalled-tint: 18%;
+			--shadow: 0 1px 2px rgb(0 0 0 / .4), 0 10px 30px rgb(0 0 0 / .35);
+			color-scheme: dark;
+		}
+
+		* { box-sizing: border-box; }
+
+		[hidden] { display: none !important; }
+
+		html, body { margin: 0; }
+
+		body {
+			background: var(--bg);
+			color: var(--text);
+			font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+			font-variant-numeric: tabular-nums;
+			min-height: 100vh;
+		}
+
+		button, input, select { font: inherit; color: inherit; }
+
+		svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+		kbd {
+			font: 600 11px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+			padding: 3px 5px;
+			border: 1px solid var(--line);
+			border-bottom-width: 2px;
+			border-radius: 5px;
+			color: var(--muted);
+			background: var(--surface);
+		}
+
+		/* ---------- top bar ---------- */
+		.topbar {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			padding: 12px 20px;
+			border-bottom: 1px solid var(--line);
+			background: var(--surface);
+			position: sticky;
+			top: 0;
+			z-index: 5;
+		}
+
+		.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; white-space: nowrap; }
+
+		.brand-tile {
+			display: grid;
+			place-items: center;
+			width: 34px;
+			height: 34px;
+			border-radius: 8px;
+			background: var(--accent);
+			color: var(--accent-ink);
+			font-size: 15px;
+			position: relative;
+		}
+
+		.brand-tile small { position: absolute; top: 2px; left: 4px; font-size: 7px; opacity: .8; }
+
+		.progress { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; max-width: 420px; margin-left: auto; }
+		.progress-text { font-weight: 600; white-space: nowrap; }
+		.progress-text span { color: var(--muted); font-weight: 500; }
+		.progress-bar { flex: 1; height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+		.progress-bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width .4s ease; }
+
+		.tools { display: flex; gap: 6px; }
+
+		.icon-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			height: 38px;
+			padding: 0 11px;
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			background: var(--surface);
+			cursor: pointer;
+			color: inherit;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		.icon-btn:hover { background: var(--surface-2); }
+		.icon-btn:focus-visible, .btn:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+		/* ---------- layout ---------- */
+		.layout { display: grid; grid-template-columns: 360px 1fr; gap: 24px; padding: 24px; align-items: start; }
+
+		.stage { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 86px; }
+
+		.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+		/* ---------- now calling ---------- */
+		.now { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+		.now-head { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 14px; font-weight: 500; }
+
+		.now-body { display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: center; }
+
+		.now-tile {
+			--c: var(--muted);
+			aspect-ratio: 1 / 1.08;
+			border-radius: 14px;
+			background: var(--c);
+			color: #fff;
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+			padding: 10px 12px;
+			position: relative;
+			box-shadow: inset 0 0 0 1px rgb(255 255 255 / .12), 0 12px 28px -10px var(--c);
+			transition: background .2s ease;
+		}
+
+		.now-tile .nz { font-size: 18px; font-weight: 600; }
+		.now-tile .nm { position: absolute; top: 12px; right: 12px; font-size: 11px; opacity: .85; }
+		.now-tile .ns { font-size: 64px; font-weight: 700; line-height: 1; align-self: center; text-align: center; letter-spacing: -.02em; }
+		.now-tile .nn { text-align: center; font-size: 13px; font-weight: 500; opacity: .95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+		.now-tile.empty, .now-tile.mystery { background: var(--surface-2); color: var(--muted); box-shadow: inset 0 0 0 2px var(--line); }
+		.now-tile.mystery .ns { color: var(--accent); }
+		.now-tile.land { animation: land .45s cubic-bezier(.2, 1.4, .4, 1); }
+		.now-tile.rolling .ns { filter: blur(.6px); }
+
+		@keyframes land { from { transform: scale(.82) rotate(-4deg); } to { transform: none; } }
+
+		.now-info { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+		.now-name { font-size: 28px; font-weight: 700; line-height: 1.05; overflow-wrap: anywhere; }
+
+		.chip {
+			align-self: flex-start;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 12px;
+			font-weight: 600;
+			padding: 4px 9px;
+			border-radius: 99px;
+			background: color-mix(in srgb, var(--c, var(--muted)) 14%, var(--surface));
+			color: color-mix(in srgb, var(--c, var(--muted)) 75%, var(--text));
+		}
+
+		.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); }
+
+		.clue { margin: 0; font-size: 15px; line-height: 1.4; color: var(--muted); }
+		.clue.big { font-size: 19px; color: var(--text); font-weight: 500; }
+
+		.quiz-timer { height: 4px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+		.quiz-timer i { display: block; height: 100%; width: 0; background: var(--accent); }
+
+		/* ---------- controls ---------- */
+		.controls { display: flex; flex-direction: column; gap: 10px; }
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+			border-radius: 12px;
+			height: 44px;
+			padding: 0 12px;
+			cursor: pointer;
+			font-weight: 600;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.btn:hover:not(:disabled) { background: var(--surface-2); }
+		.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+		.btn-primary { height: 60px; font-size: 20px; background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: 0 8px 20px -10px var(--accent); }
+		.btn-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 88%, var(--text)); }
+		.btn-primary kbd { background: transparent; color: inherit; border-color: color-mix(in srgb, var(--accent-ink) 40%, transparent); }
+
+		.auto-bar { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: color-mix(in srgb, var(--accent-ink) 55%, transparent); }
+
+		.btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+		.btn-row .btn { flex-direction: column; height: 58px; gap: 3px; font-size: 12px; font-weight: 500; }
+		.btn.on { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); border-color: var(--accent); color: color-mix(in srgb, var(--accent) 70%, var(--text)); }
+
+		/* ---------- recent & prizes ---------- */
+		.side-panel { padding: 14px 16px 16px; }
+		.side-panel h3 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: flex; justify-content: space-between; }
+
+		.recent { display: flex; gap: 6px; flex-wrap: wrap; min-height: 44px; }
+		.recent .mini { width: 44px; height: 44px; border-radius: 8px; background: var(--c); color: #fff; display: grid; place-items: center; position: relative; font-weight: 700; font-size: 16px; }
+		.recent .mini small { position: absolute; top: 2px; left: 4px; font-size: 9px; font-weight: 500; opacity: .85; }
+		.recent .mini:nth-child(n+2) { opacity: .8; }
+		.recent .mini:nth-child(n+5) { opacity: .55; }
+		.muted-note { color: var(--muted); font-size: 14px; margin: 0; }
+
+		.prize-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+		.prize-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; font-size: 14px; }
+		.winners { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 4px; }
+		.winner { display: inline-flex; align-items: center; gap: 2px; padding: 2px 4px 2px 8px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px; font-weight: 600; }
+		.prize-list li.won { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+		.prize-list .pname { flex: 1; font-weight: 500; }
+		.prize-list .who { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 13px; color: var(--muted); }
+		.prize-list li.won .who { color: var(--text); font-weight: 600; }
+		.prize-list .revoke { border: 0; background: none; padding: 2px; cursor: pointer; color: var(--muted); display: inline-flex; }
+		.prize-list .revoke svg { width: 14px; height: 14px; }
+
+		/* ---------- board ---------- */
+		.board-panel { padding: 16px 18px 20px; min-width: 0; }
+
+		.board-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+		.board-head h2 { margin: 0; font-size: 16px; }
+
+		.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--surface-2); border-radius: 10px; }
+		.seg button { border: 0; background: transparent; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--muted); }
+		.seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgb(0 0 0 / .12); }
+
+		.board-scroll { overflow-x: auto; padding: 6px; margin: -6px; }
+
+		.board { display: grid; gap: 4px; justify-content: center; }
+
+		.board.view-table {
+			--size: clamp(36px, min(calc((100vw - 540px) / 18.6), calc((100vh - 200px) / 9.8)), 92px);
+			grid-template-columns: repeat(18, var(--size));
+			grid-template-rows: repeat(7, var(--size)) calc(var(--size) * .35) repeat(2, var(--size));
+		}
+
+		.board.view-board {
+			--size: clamp(38px, min(calc((100vw - 540px) / 9.8), calc((100vh - 230px) / 12)), 84px);
+			grid-template-columns: repeat(9, var(--size));
+			grid-auto-rows: var(--size);
+		}
+
+		.tile {
+			--c: var(--muted);
+			border-radius: calc(var(--size) * .12);
+			background: color-mix(in srgb, var(--c) var(--uncalled-tint), var(--surface));
+			border: 1px solid color-mix(in srgb, var(--c) 22%, var(--line));
+			color: color-mix(in srgb, var(--c) 45%, var(--text));
+			position: relative;
+			display: grid;
+			place-items: center;
+			overflow: hidden;
+			transition: background .25s ease, color .25s ease, transform .25s ease;
+			user-select: none;
+		}
+
+		.tile .tz { position: absolute; top: 3%; left: 7%; font-size: calc(var(--size) * .2); opacity: .8; }
+		.tile .ts { font-weight: 700; font-size: calc(var(--size) * .4); line-height: 1; }
+		.tile .tn { display: none; font-size: calc(var(--size) * .15); font-weight: 600; text-align: center; line-height: 1.05; padding: 0 2px; overflow-wrap: anywhere; }
+
+		.label-number .tile .tz { position: static; font-size: calc(var(--size) * .4); font-weight: 700; opacity: 1; }
+		.label-number .tile .ts { position: absolute; bottom: 4%; right: 8%; font-size: calc(var(--size) * .2); font-weight: 600; opacity: .8; }
+		.label-name .tile .ts { display: none; }
+		.label-name .tile .tn { display: block; }
+
+		.tile.called { background: var(--c); color: #fff; border-color: transparent; }
+		.tile.latest { z-index: 1; transform: scale(1.12); box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--c), 0 10px 24px -6px var(--c); animation: pulse 1.6s ease-in-out infinite; }
+
+		@keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--surface), 0 0 0 9px color-mix(in srgb, var(--c) 40%, transparent), 0 10px 24px -6px var(--c); } }
+
+		.placeholder { border-radius: calc(var(--size) * .12); border: 1px dashed color-mix(in srgb, var(--c) 50%, var(--line)); color: color-mix(in srgb, var(--c) 70%, var(--text)); display: grid; place-items: center; font-size: calc(var(--size) * .17); font-weight: 600; text-align: center; }
+
+		.legend { grid-row: 1 / 4; grid-column: 3 / 13; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 6px 14px; padding: 0 12px; font-size: clamp(11px, calc(var(--size) * .19), 15px); color: var(--muted); }
+		.legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+		.legend span::before { content: ""; width: .9em; height: .9em; border-radius: 3px; background: var(--c); }
+
+		.col-head { display: grid; place-items: end center; padding-bottom: 4px; font-size: calc(var(--size) * .2); font-weight: 600; color: var(--muted); }
+
+		/* ---------- dialogs ---------- */
+		dialog {
+			border: 1px solid var(--line);
+			border-radius: 18px;
+			padding: 0;
+			width: min(560px, calc(100vw - 32px));
+			background: var(--surface);
+			color: var(--text);
+			box-shadow: 0 30px 80px rgb(0 0 0 / .35);
+		}
+
+		dialog::backdrop { background: rgb(10 10 9 / .55); backdrop-filter: blur(3px); }
+		.dlg-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); margin: 0; }
+		.dlg-head h2 { margin: 0; font-size: 18px; }
+		.dlg-head .close { border: 0; background: none; cursor: pointer; padding: 6px; border-radius: 8px; display: inline-flex; color: var(--muted); }
+		.dlg-head .close:hover { background: var(--surface-2); }
+		.dlg-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+		.field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500; }
+		.field small { color: var(--muted); font-weight: 400; }
+		.input, .select {
+			height: 42px;
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			padding: 0 12px;
+			background: var(--bg);
+		}
+		.input:focus, .select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+		.input.code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 20px; letter-spacing: .08em; text-transform: uppercase; height: 50px; }
+
+		.setting { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 15px; }
+		.setting > div { display: flex; flex-direction: column; gap: 2px; }
+		.setting small { color: var(--muted); font-size: 13px; }
+		.setting select, .setting input[type="number"], .setting .input { width: 170px; flex: none; }
+		#gameCodeInput { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
+		.settings-group { display: flex; flex-direction: column; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+		.settings-group:last-child { border-bottom: 0; padding-bottom: 0; }
+		.settings-group h3 { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+
+		.switch { appearance: none; width: 42px; height: 24px; border-radius: 99px; background: var(--line); position: relative; cursor: pointer; transition: background .2s; flex: none; margin: 0; }
+		.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 2px rgb(0 0 0 / .3); }
+		.switch:checked { background: var(--accent); }
+		.switch:checked::after { transform: translateX(18px); }
+		.switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+		input[type="range"] { accent-color: var(--accent); width: 170px; }
+
+		.btn-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--line)); }
+		.btn-danger.solid { background: var(--danger); color: #fff; border-color: transparent; }
+		.dlg-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+		.shortcuts { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; font-size: 15px; margin: 0; }
+		.shortcuts dt { display: flex; gap: 4px; justify-content: flex-end; }
+		.shortcuts dd { margin: 0; }
+
+		/* ---------- claim check ---------- */
+		.ticket { border: 2px solid var(--text); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+		.ticket-meta { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--muted); }
+		.ticket-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; }
+		.tc { --c: var(--muted); aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center; position: relative; border: 1px solid var(--line); font-weight: 700; font-size: clamp(13px, 3.4vw, 18px); }
+		.tc small { position: absolute; top: 1px; left: 3px; font-size: 9px; font-weight: 500; opacity: .75; }
+		.tc.empty { border: 0; background: repeating-linear-gradient(135deg, var(--surface-2) 0 4px, transparent 4px 8px); }
+		.tc.hit { background: var(--c); color: #fff; border-color: transparent; }
+		.tc.latest { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text); }
+
+		.verdicts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+		.verdicts li { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: var(--bg); font-size: 14px; }
+		.verdicts li.yes { background: color-mix(in srgb, var(--accent) 13%, var(--surface)); }
+		.verdicts .mark { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--muted); }
+		.verdicts li.yes .mark { background: var(--accent); color: var(--accent-ink); }
+		.verdicts .mark svg { width: 14px; height: 14px; stroke-width: 3; }
+		.verdicts b { display: block; font-size: 15px; }
+		.verdicts span { color: var(--muted); }
+		.verdicts .btn { height: 34px; font-size: 13px; }
+		.claim-error { color: var(--danger); font-weight: 500; margin: 0; }
+		.stale { color: var(--danger) !important; }
+
+		/* ---------- toast ---------- */
+		.toast {
+			position: fixed;
+			left: 50%;
+			bottom: 24px;
+			transform: translate(-50%, calc(100% + 40px));
+			opacity: 0;
+			pointer-events: none;
+			background: var(--text);
+			color: var(--bg);
+			padding: 10px 12px 10px 16px;
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			font-weight: 500;
+			box-shadow: var(--shadow);
+			transition: transform .3s ease, opacity .3s ease;
+			z-index: 50;
+			max-width: calc(100vw - 32px);
+		}
+		.toast.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+		.toast button { border: 0; background: color-mix(in srgb, var(--bg) 18%, transparent); color: inherit; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+		.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+		/* ---------- responsive ---------- */
+		@media (max-width: 1100px) {
+			.layout { grid-template-columns: 1fr; padding: 16px; gap: 16px; }
+			.stage { position: static; display: grid; grid-template-columns: 1fr 1fr; }
+			.stage .now { grid-row: span 2; }
+			.board.view-table { --size: clamp(34px, calc((100vw - 120px) / 18.6), 70px); }
+			.board.view-board { --size: clamp(34px, calc((100vw - 120px) / 9.6), 70px); }
+		}
+
+		@media (max-width: 720px) {
+			.topbar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
+			.progress { order: 3; flex-basis: 100%; max-width: none; }
+			.tools { margin-left: auto; }
+			.tools .label { display: none; }
+			.stage { grid-template-columns: 1fr; }
+			.stage .now { grid-row: auto; }
+			.now-body { grid-template-columns: 120px 1fr; }
+			.now-tile .ns { font-size: 50px; }
+			.board-panel { padding: 14px 12px 16px; }
+			.board.view-board { --size: clamp(30px, calc((100vw - 90px) / 9.6), 70px); }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { animation: none !important; transition: none !important; }
+		}
+	</style>
 </head>
 
-<body onload="initializise()" id="body">
+<body>
+	<header class="topbar">
+		<div class="brand"><span class="brand-tile"><small>79</small>Au</span>Chem Housie</div>
+		<div class="progress" aria-live="polite">
+			<div class="progress-text" id="progressText">0 <span>/ 90 called</span></div>
+			<div class="progress-bar"><i id="progressBar"></i></div>
+		</div>
+		<nav class="tools">
+			<button class="icon-btn" id="claimBtn" title="Check a claim (C)"><svg class="i" data-icon="ticket"></svg><span class="label">Check claim</span></button>
+			<a class="icon-btn" href="Housie%20Ticket%20Generator.html" target="_blank" title="Print tickets"><svg class="i" data-icon="printer"></svg><span class="label">Tickets</span></a>
+			<button class="icon-btn" id="settingsBtn" title="Settings"><svg class="i" data-icon="sliders"></svg><span class="sr-only">Settings</span></button>
+			<button class="icon-btn" id="fullscreenBtn" title="Fullscreen (F)"><svg class="i" data-icon="maximize"></svg><span class="sr-only">Fullscreen</span></button>
+			<button class="icon-btn" id="helpBtn" title="Keyboard shortcuts (?)"><svg class="i" data-icon="help"></svg><span class="sr-only">Keyboard shortcuts</span></button>
+		</nav>
+	</header>
+
+	<main class="layout">
+		<aside class="stage">
+			<section class="panel now" aria-live="polite">
+				<div class="now-head"><span id="callNo">Ready when you are</span><span id="quizBadge" hidden>Quiz mode</span></div>
+				<div class="now-body">
+					<div class="now-tile empty" id="nowTile">
+						<span class="nz"></span><span class="nm"></span>
+						<span class="ns">?</span>
+						<span class="nn"></span>
+					</div>
+					<div class="now-info">
+						<div class="now-name" id="nowName">No calls yet</div>
+						<span class="chip" id="nowCat" hidden></span>
+					</div>
+				</div>
+				<p class="clue" id="nowClue">Press <kbd>Space</kbd> or the button below to call the first element.</p>
+				<div class="quiz-timer" id="quizTimer" hidden><i></i></div>
+				<div class="controls">
+					<button class="btn btn-primary" id="callBtn"><svg class="i" data-icon="play"></svg><span id="callLabel">Call next</span> <kbd>Space</kbd><span class="auto-bar" id="autoBar"></span></button>
+					<div class="btn-row">
+						<button class="btn" id="repeatBtn" title="Repeat (O)"><svg class="i" data-icon="volume"></svg>Repeat</button>
+						<button class="btn" id="undoBtn" title="Undo (Z)"><svg class="i" data-icon="undo"></svg>Undo</button>
+						<button class="btn" id="redoBtn" title="Redo (Y)"><svg class="i" data-icon="redo"></svg>Redo</button>
+						<button class="btn" id="autoBtn" title="Auto-call (A)" aria-pressed="false"><svg class="i" data-icon="timer"></svg><span id="autoLabel">Auto</span></button>
+					</div>
+				</div>
+			</section>
+
+			<section class="panel side-panel">
+				<h3>Previously called</h3>
+				<div class="recent" id="recent"></div>
+			</section>
+
+			<section class="panel side-panel">
+				<h3>Prizes</h3>
+				<ul class="prize-list" id="prizeList"></ul>
+			</section>
+		</aside>
+
+		<section class="panel board-panel">
+			<div class="board-head">
+				<div class="seg" role="group" aria-label="Board layout">
+					<button data-view="table">Periodic table</button>
+					<button data-view="board">Ticket columns</button>
+				</div>
+				<div class="seg" role="group" aria-label="Tile labels">
+					<button data-label="symbol">Symbol</button>
+					<button data-label="number">Number</button>
+					<button data-label="name">Name</button>
+				</div>
+			</div>
+			<div class="board-scroll">
+				<div class="board" id="board"></div>
+			</div>
+		</section>
+	</main>
+
+	<dialog id="claimDialog">
+		<form method="dialog" class="dlg-head">
+			<h2>Check a claim</h2>
+			<button class="close" aria-label="Close"><svg class="i" data-icon="x"></svg></button>
+		</form>
+		<div class="dlg-body">
+			<label class="field">Ticket number
+				<input class="input code" id="claimInput" placeholder="17" autocomplete="off" spellcheck="false">
+				<small id="claimHint"></small>
+			</label>
+			<div id="claimResult"></div>
+		</div>
+	</dialog>
+
+	<dialog id="settingsDialog">
+		<form method="dialog" class="dlg-head">
+			<h2>Settings</h2>
+			<button class="close" aria-label="Close"><svg class="i" data-icon="x"></svg></button>
+		</form>
+		<div class="dlg-body">
+			<div class="settings-group">
+				<h3>Voice</h3>
+				<label class="setting"><div>Read calls aloud</div><input type="checkbox" class="switch" data-setting="speech"></label>
+				<label class="setting"><div>Read the clue too<small>Adds a fun fact after each element</small></div><input type="checkbox" class="switch" data-setting="sayClue"></label>
+				<label class="setting"><div>Voice</div><select class="select" id="voiceSelect" data-setting="voice"></select></label>
+				<label class="setting"><div>Speed</div><input type="range" min="0.5" max="1.4" step="0.05" data-setting="rate"></label>
+			</div>
+			<div class="settings-group">
+				<h3>Game</h3>
+				<label class="setting"><div>Quiz mode<small>Read the clue first, reveal the element after a pause</small></div><input type="checkbox" class="switch" data-setting="quiz"></label>
+				<label class="setting"><div>Quiz reveal after</div><select class="select" data-setting="quizDelay"><option value="4">4 seconds</option><option value="6">6 seconds</option><option value="10">10 seconds</option><option value="15">15 seconds</option><option value="0">Only when I press</option></select></label>
+				<label class="setting"><div>Game code<small>From the ticket printer. Lets you check claims by ticket number. Stays on this device.</small></div><input class="input" id="gameCodeInput" data-setting="gameCode" maxlength="12" autocomplete="off" spellcheck="false" placeholder="K7Q2"></label>
+				<label class="setting"><div>Auto-call every</div><select class="select" data-setting="autoInterval"><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="12">12 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option></select></label>
+				<label class="setting"><div>Slot-machine roll<small>Spin through elements before landing</small></div><input type="checkbox" class="switch" data-setting="animate"></label>
+			</div>
+			<div class="settings-group">
+				<h3>Display</h3>
+				<label class="setting"><div>Theme</div><select class="select" data-setting="theme"><option value="auto">Match system</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+			</div>
+			<div class="settings-group">
+				<h3>Danger zone</h3>
+				<div class="setting"><div>Start a new game<small>Clears every call and prize</small></div><button class="btn btn-danger" id="resetBtn"><svg class="i" data-icon="reset"></svg>Reset</button></div>
+			</div>
+		</div>
+	</dialog>
+
+	<dialog id="resetDialog">
+		<form method="dialog" class="dlg-head">
+			<h2>Start a new game?</h2>
+			<button class="close" aria-label="Close"><svg class="i" data-icon="x"></svg></button>
+		</form>
+		<div class="dlg-body">
+			<p class="muted-note" id="resetText"></p>
+			<form method="dialog" class="dlg-actions">
+				<button class="btn" value="cancel">Keep playing</button>
+				<button class="btn btn-danger solid" value="reset" id="confirmResetBtn">Reset game</button>
+			</form>
+		</div>
+	</dialog>
+
+	<dialog id="helpDialog">
+		<form method="dialog" class="dlg-head">
+			<h2>Keyboard shortcuts</h2>
+			<button class="close" aria-label="Close"><svg class="i" data-icon="x"></svg></button>
+		</form>
+		<div class="dlg-body">
+			<dl class="shortcuts">
+				<dt><kbd>Space</kbd><kbd>P</kbd></dt><dd>Call next element (or reveal in quiz mode)</dd>
+				<dt><kbd>O</kbd></dt><dd>Repeat the current call</dd>
+				<dt><kbd>Z</kbd> <kbd>Y</kbd></dt><dd>Undo / redo</dd>
+				<dt><kbd>A</kbd></dt><dd>Start or stop auto-call</dd>
+				<dt><kbd>Q</kbd></dt><dd>Toggle quiz mode</dd>
+				<dt><kbd>C</kbd></dt><dd>Check a claim</dd>
+				<dt><kbd>V</kbd></dt><dd>Switch board layout</dd>
+				<dt><kbd>L</kbd></dt><dd>Cycle tile labels</dd>
+				<dt><kbd>F</kbd></dt><dd>Fullscreen</dd>
+				<dt><kbd>R</kbd></dt><dd>Reset game</dd>
+			</dl>
+		</div>
+	</dialog>
+
+	<div class="toast" id="toast" role="status"><span id="toastText"></span><button id="toastAction" hidden></button></div>
+
+	<script src="housie-core.js"></script>
 	<script>
-		var body = document.getElementById("body");
-		var symbolArray = ["H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th"];
-		var namesArray = ["Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon", "Nitrogen", "Oxygen", "Fluorine", "Neon", "Sodium", "Magnesium", "Aluminium", "Silicon", "Phosphorus", "Sulphur", "Chlorine", "Argon", "Potassium", "Calcium", "Scandium", "Titanium", "Vanadium", "Chromium", "Manganese", "Iron", "Cobolt", "Nickel", "Copper", "Zinc", "Gallium", "Germanium", "Arsenic", "Selenium", "Bromine", "Krypton", "Rubidium", "Strontium", "Yttrium", "Zirconium", "Niobium", "Molybdenium", "Technetium", "Ruthenium", "Rhodium", "Palladium", "Silver", "Cadmium", "Indium", "Tin", "Antimony", "Tellurium", "Iodine", "Xenon", "Cesium", "Barium", "Lanthanum", "Cerium", "Praseodymium", "Neodymium", "Promethium", "Samarium", "Europium", "Gadolinium", "Terbium", "Dysprosium", "Holmium", "Erbium", "Thulium", "Ytterbium", "Lutetium", "Hafnium", "Tantalum", "Tungsten", "Rhenium", "Osmium", "Iridium", "Platinum", "Gold", "Mercury", "Thallium", "Lead", "Bismuth", "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Thorium"];
-		var historyArray = [];
-		var undoArray = [];
-		var displayType = 'symbol';
-		var fired = false;
+		var H = window.ChemHousie;
+		var EL = H.ELEMENTS;
 
-		function initializise() {
-			historyArray = JSON.parse(localStorage.getItem('history')) ?? [];
-			if (historyArray.length == 0) {
-				// initialise the window object as is
-				generateGrid(symbolArray);
-			}
-			else {
-				// do stuff
-				generateGrid(symbolArray);
-				historyArray.forEach((item, index) => {
-					markNo(item);
-				})
-			}
-		}
-
-		function checkbox() {
-			var name = document.getElementById('name');
-			var symbol = document.getElementById('symbol');
-			var number = document.getElementById('no');
-			var element = document.getElementById('Element');
-			if (name.checked == true) {
-				element.hidden = false
-			} else {
-				element.hidden = true;
-			}
-			if (symbol.checked == true) {
-				number.hidden = false;
-			} else {
-				number.hidden = true;
-			}
-		}
-
-		function radio() {
-			var radio = document.getElementsByName('list-radio')
-			for (i = 0; i < radio.length; i++) {
-				if (radio[i].checked && radio[i].value == 'number') {
-					displayType = 'number'
-				}
-				else if (radio[i].checked && radio[i].value == 'name') {
-					displayType = 'name'
-				}
-				else if (radio[i].checked && radio[i].value == 'symbol') {
-					displayType = 'symbol'
-				}
-			}
-			regenrateGridWithCurrent(historyArray,false);
-		}
-
-		body.onkeydown = function (event) {
-			if (!fired) {
-				fired = true;
-				var key = event.keyCode;
-				if (key == 82) {
-					reset();
-				}
-				else if (key == 80) {
-					getnumber();
-				}
-				else if (key == 90) {
-					undo()
-
-				}
-				else if (key == 89) {
-					redo()
-				}
-				else if (key == 79) {
-					repeatCurrentSymbol();
-				}
-			}
+		var ICONS = {
+			play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+			eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+			volume: '<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+			undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+			redo: '<path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>',
+			timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M10 2h4"/>',
+			pause: '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+			ticket: '<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>',
+			printer: '<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+			sliders: '<path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/>',
+			maximize: '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+			help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+			x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+			check: '<path d="M20 6 9 17l-5-5"/>',
+			reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>'
 		};
 
-		function repeatCurrentSymbol() {
-			utterance = new SpeechSynthesisUtterance(namesArray[historyArray[historyArray.length - 1]]);
-			utterance.rate = 0.50;
-			utterance.pitch = 1.85;
-			speechSynthesis.speak(utterance);
+		function icon(name) {
+			return '<svg class="i" viewBox="0 0 24 24">' + ICONS[name] + '</svg>';
 		}
 
-		body.onkeyup = function () {
-			fired = false;
-		};
-
-		function undo() {
-			var conf = confirm('Are you sure you want to undo this action ?');
-			if (conf == true) {
-				if (historyArray.length !== 0) {
-					undoArray.push(historyArray.pop());
-				}
-				regenrateGridWithCurrent(historyArray);
-				localStorage.setItem('history', JSON.stringify(historyArray));
-			}
-		}
-
-		function redo() {
-			var conf = confirm('Are you sure you want to redo this action ?')
-			if (conf == true) {
-				if (undoArray.length !== 0) {
-					historyArray.push(undoArray.pop());
-				}
-				regenrateGridWithCurrent(historyArray);
-				localStorage.setItem('history', JSON.stringify(historyArray));
-			}
-		}
-
-		function regenrateGridWithCurrent(historyArray, displayElements = true) {
-			if (displayElements == true) {
-				x = historyArray.slice(historyArray.length - 1)
-				if (!isNaN(x)) {
-					document.getElementById("no").innerHTML = symbolArray[x];
-					document.getElementById("Element").innerHTML = namesArray[x];
-				}
-			}
-			generateGrid(symbolArray);
-			historyArray.forEach((item, index) => {
-				markNo(item);
+		function paintIcons(root) {
+			root.querySelectorAll('svg[data-icon]').forEach(function (svg) {
+				svg.setAttribute('viewBox', '0 0 24 24');
+				svg.innerHTML = ICONS[svg.dataset.icon];
 			});
 		}
 
-		function generateGrid(symArray) {
-			if (displayType == 'symbol') {
-				for (var j = 0; j < 90; j++) {
-					var k = j + 1;
-					document.getElementById(k).innerHTML = "<font size = '14'><center><B>" + symArray[j] + "</B><center></font>";
-				}
-			} else if (displayType == 'number') {
-				for (var j = 0; j < 90; j++) {
-					var k = j + 1;
-					document.getElementById(k).innerHTML = "<font size = '14'><center><B>" + (j + 1) + "</B><center></font>";
-				}
-			} else if (displayType == 'name') {
-				for (var j = 0; j < 90; j++) {
-					var k = j + 1;
-					document.getElementById(k).innerHTML = "<font size = '11'><center><B>" + namesArray[j] + "</B><center></font>";
-				}
-			}
-
-		}
-
-		function markNo(num) {
-			if (displayType == 'symbol') {
-				document.getElementById(num + 1).innerHTML = "<font class = 'text-red-400' style = 'text-decoration: line-through;'size = '14'><center><B>" + symbolArray[num] + "</B><center></font>";
-			}else if (displayType == 'number') {
-				document.getElementById(num + 1).innerHTML = "<font class = 'text-red-400' style = 'text-decoration: line-through;'size = '14'><center><B>" + (num+1) + "</B><center></font>";
-			}else if (displayType == 'name') {
-				document.getElementById(num + 1).innerHTML = "<font class = 'text-red-400' style = 'text-decoration: line-through;'size = '11'><center><B>" + namesArray[num] + "</B><center></font>";
+		function load(key, fallback) {
+			try {
+				var value = JSON.parse(localStorage.getItem(key));
+				return value == null ? fallback : value;
+			} catch (e) {
+				return fallback;
 			}
 		}
 
-		function unmarkNo(num) {
-			if (displayType == 'symbol') {
-				document.getElementById(num + 1).innerHTML = "<font size = '14'><center><B>" + symbolArray[num] + "</B><center></font>";
-			}else if (displayType == 'number') {
-				document.getElementById(num + 1).innerHTML = "<font size = '14'><center><B>" + (num+1) + "</B><center></font>";
-			}else if (displayType == 'name') {
-				document.getElementById(num + 1).innerHTML = "<font size = '11'><center><B>" + namesArray[num] + "</B><center></font>";
-			}
+		function save(key, value) {
+			try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { }
 		}
 
-		function reset() {
-			var r = confirm("Are You Sure You Want To Reset!");
-			if (r == true) {
-				localStorage.clear();
-				location.reload();
+		function color(el) { return H.CATEGORIES[el.category].color; }
+
+		function randomInt(n) {
+			if (window.crypto && crypto.getRandomValues) return crypto.getRandomValues(new Uint32Array(1))[0] % n;
+			return Math.floor(Math.random() * n);
+		}
+
+		// 'history' keeps the V3 format (element indices 0-89) so games in progress carry over
+		var calls = load('history', []).filter(function (i, pos, all) {
+			return Number.isInteger(i) && i >= 0 && i < 90 && all.indexOf(i) === pos;
+		});
+		var redoStack = [];
+		// pattern key -> ticket codes that won it; several tickets can share a prize
+		var prizes = load('chem-housie-prizes', {});
+		Object.keys(prizes).forEach(function (key) {
+			if (!Array.isArray(prizes[key])) prizes[key] = [prizes[key]];
+		});
+		var settings = Object.assign({
+			view: window.innerWidth < 720 ? 'board' : 'table',
+			label: 'symbol',
+			speech: true,
+			sayClue: false,
+			voice: '',
+			rate: 0.9,
+			quiz: false,
+			quizDelay: 6,
+			autoInterval: 8,
+			animate: true,
+			theme: 'auto',
+			gameCode: ''
+		}, load('chem-housie-settings', {}));
+
+		var pending = null;      // element called in quiz mode but not yet revealed
+		var busy = false;        // slot-machine roll in progress
+		var autoOn = false;
+		var autoTimer = null;
+		var quizTimer = null;
+		var tiles = {};
+
+		/* ---------- speech ---------- */
+
+		function speak(text) {
+			if (!settings.speech || !window.speechSynthesis) return;
+			speechSynthesis.cancel();
+			var utterance = new SpeechSynthesisUtterance(text);
+			var voice = speechSynthesis.getVoices().find(function (v) { return v.voiceURI === settings.voice; });
+			if (voice) utterance.voice = voice;
+			utterance.rate = settings.rate;
+			speechSynthesis.speak(utterance);
+		}
+
+		function announce(idx) {
+			var el = EL[idx];
+			var text = el.name + '. Number ' + el.z + '.';
+			if (settings.sayClue && !settings.quiz) text += ' ' + el.clue + '.';
+			speak(text);
+		}
+
+		function fillVoices() {
+			if (!window.speechSynthesis) return;
+			var select = document.getElementById('voiceSelect');
+			var voices = speechSynthesis.getVoices();
+			select.innerHTML = '<option value="">Default voice</option>' + voices.map(function (v) {
+				return '<option value="' + v.voiceURI.replace(/"/g, '&quot;') + '">' + v.name + ' (' + v.lang + ')</option>';
+			}).join('');
+			select.value = settings.voice;
+		}
+
+		/* ---------- board ---------- */
+
+		function buildBoard() {
+			var board = document.getElementById('board');
+			board.className = 'board view-' + settings.view + ' label-' + settings.label;
+			board.innerHTML = '';
+			tiles = {};
+
+			if (settings.view === 'table') {
+				var legend = document.createElement('div');
+				legend.className = 'legend';
+				legend.innerHTML = Object.keys(H.CATEGORIES).map(function (key) {
+					return '<span style="--c:' + H.CATEGORIES[key].color + '">' + H.CATEGORIES[key].label + '</span>';
+				}).join('');
+				board.appendChild(legend);
+				[[6, 'lanthanide', '57–71'], [7, 'actinide', '89–90']].forEach(function (p) {
+					var ph = document.createElement('div');
+					ph.className = 'placeholder';
+					ph.style.cssText = 'grid-row:' + p[0] + ';grid-column:3;--c:' + H.CATEGORIES[p[1]].color;
+					ph.textContent = p[2];
+					board.appendChild(ph);
+				});
 			} else {
-
+				H.COLUMN_RANGES.forEach(function (range, c) {
+					var head = document.createElement('div');
+					head.className = 'col-head';
+					head.style.cssText = 'grid-row:1;grid-column:' + (c + 1);
+					head.textContent = range[0] + '–' + range[1];
+					board.appendChild(head);
+				});
 			}
-		}
 
-		function getVoices() {
-			let voices = speechSynthesis.getVoices();
-			if (!voices.length) {
-				let utterance = new SpeechSynthesisUtterance("");
-				speechSynthesis.speak(utterance);
-				voices = speechSynthesis.getVoices();
-			}
-			return voices;
-		}
-
-		function getnumber() {
-			while (true) {
-				var x = Math.floor((Math.random() * 90));
-				if (!historyArray.includes(x)) {
-					historyArray.push(x);
-					let utterance = new SpeechSynthesisUtterance(namesArray[x]);
-					utterance.rate = 0.50;
-					utterance.pitch = 1.85;
-					speechSynthesis.speak(utterance);
-					speechSynthesis.speak(utterance);
-					document.getElementById("no").innerHTML = symbolArray[x];
-					document.getElementById("Element").innerHTML = namesArray[x];
-					markNo(x);
-					undoArray = [];
-					break;
+			EL.forEach(function (el, idx) {
+				var tile = document.createElement('div');
+				tile.className = 'tile';
+				tile.style.setProperty('--c', color(el));
+				if (settings.view === 'table') {
+					tile.style.gridRow = el.row;
+					tile.style.gridColumn = el.col;
+				} else {
+					var c = Math.min(Math.floor(el.z / 10), 8);
+					tile.style.gridColumn = c + 1;
+					tile.style.gridRow = el.z - H.COLUMN_RANGES[c][0] + 2;
 				}
-			}
-			localStorage.setItem('history', JSON.stringify(historyArray));
+				tile.title = el.z + ' · ' + el.name + ' (' + el.symbol + ')';
+				tile.innerHTML = '<span class="tz">' + el.z + '</span><span class="ts">' + el.symbol + '</span><span class="tn">' + el.name + '</span>';
+				board.appendChild(tile);
+				tiles[idx] = tile;
+			});
+
+			document.querySelectorAll('[data-view]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.view === settings.view); });
+			document.querySelectorAll('[data-label]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.label === settings.label); });
+			updateBoard();
 		}
 
+		function revealed() {
+			return pending === null ? calls : calls.slice(0, -1);
+		}
+
+		function updateBoard() {
+			var shown = revealed();
+			var latest = shown[shown.length - 1];
+			EL.forEach(function (el, idx) {
+				tiles[idx].classList.toggle('called', shown.indexOf(idx) !== -1);
+				tiles[idx].classList.toggle('latest', idx === latest);
+			});
+		}
+
+		/* ---------- stage ---------- */
+
+		function paintTile(el) {
+			var tile = document.getElementById('nowTile');
+			tile.className = 'now-tile';
+			tile.style.setProperty('--c', color(el));
+			tile.querySelector('.nz').textContent = el.z;
+			tile.querySelector('.nm').textContent = el.mass;
+			tile.querySelector('.ns').textContent = el.symbol;
+			tile.querySelector('.nn').textContent = el.name;
+		}
+
+		function paintBlankTile(kind, symbol) {
+			var tile = document.getElementById('nowTile');
+			tile.className = 'now-tile ' + kind;
+			tile.querySelector('.nz').textContent = '';
+			tile.querySelector('.nm').textContent = '';
+			tile.querySelector('.ns').textContent = symbol;
+			tile.querySelector('.nn').textContent = '';
+		}
+
+		function renderNow() {
+			var name = document.getElementById('nowName');
+			var cat = document.getElementById('nowCat');
+			var clue = document.getElementById('nowClue');
+			var callNo = document.getElementById('callNo');
+			var shown = revealed();
+			document.getElementById('quizTimer').hidden = pending === null;
+			document.getElementById('quizBadge').hidden = !settings.quiz;
+			clue.classList.toggle('big', pending !== null);
+
+			if (pending !== null) {
+				paintBlankTile('mystery', '?');
+				callNo.textContent = 'Call ' + calls.length + ' of 90 · guess the element';
+				name.textContent = 'Who am I?';
+				cat.hidden = true;
+				clue.textContent = '“' + EL[pending].clue + '”';
+				return;
+			}
+			if (!shown.length) {
+				paintBlankTile('empty', '?');
+				callNo.textContent = 'Ready when you are';
+				name.textContent = 'No calls yet';
+				cat.hidden = true;
+				clue.innerHTML = 'Press <kbd>Space</kbd> or the button below to call the first element.';
+				return;
+			}
+			var el = EL[shown[shown.length - 1]];
+			paintTile(el);
+			callNo.textContent = 'Call ' + shown.length + ' of 90';
+			name.textContent = el.name;
+			cat.hidden = false;
+			cat.style.setProperty('--c', color(el));
+			cat.textContent = H.CATEGORIES[el.category].label;
+			clue.textContent = el.clue;
+		}
+
+		function renderRecent() {
+			var shown = revealed().slice(0, -1).slice(-10).reverse();
+			var box = document.getElementById('recent');
+			if (!shown.length) {
+				box.innerHTML = '<p class="muted-note">The last ten calls show up here.</p>';
+				return;
+			}
+			box.innerHTML = shown.map(function (idx) {
+				var el = EL[idx];
+				return '<div class="mini" style="--c:' + color(el) + '" title="' + el.name + '"><small>' + el.z + '</small>' + el.symbol + '</div>';
+			}).join('');
+		}
+
+		function renderProgress() {
+			var n = revealed().length;
+			document.getElementById('progressText').innerHTML = n + ' <span>/ 90 called</span>';
+			document.getElementById('progressBar').style.width = (n / 90 * 100) + '%';
+		}
+
+		function renderControls() {
+			var label = document.getElementById('callLabel');
+			var callBtn = document.getElementById('callBtn');
+			var callIcon = callBtn.querySelector('svg');
+			if (pending !== null) {
+				label.textContent = 'Reveal';
+				callIcon.innerHTML = ICONS.eye;
+			} else {
+				label.textContent = calls.length >= 90 ? 'All 90 called' : (calls.length ? 'Call next' : 'Start calling');
+				callIcon.innerHTML = ICONS.play;
+			}
+			callBtn.disabled = calls.length >= 90 && pending === null;
+			document.getElementById('undoBtn').disabled = !calls.length;
+			document.getElementById('redoBtn').disabled = !redoStack.length;
+			document.getElementById('repeatBtn').disabled = !calls.length;
+			var autoBtn = document.getElementById('autoBtn');
+			autoBtn.classList.toggle('on', autoOn);
+			autoBtn.setAttribute('aria-pressed', autoOn);
+			autoBtn.querySelector('svg').innerHTML = autoOn ? ICONS.pause : ICONS.timer;
+			document.getElementById('autoLabel').textContent = autoOn ? settings.autoInterval + 's' : 'Auto';
+		}
+
+		function renderPrizes() {
+			document.getElementById('prizeList').innerHTML = H.PATTERNS.map(function (p) {
+				var winners = prizes[p.key] || [];
+				return '<li class="' + (winners.length ? 'won' : '') + '"><span class="pname">' + p.label + '</span>' +
+					'<span class="who">' + (winners.length ? winners.length + ' winner' + (winners.length > 1 ? 's' : '') : 'open') + '</span>' +
+					(winners.length ? '<div class="winners">' + winners.map(function (id) {
+						return '<span class="winner">' + ticketLabel(id) + '<button class="revoke" data-revoke="' + p.key + '" data-ticket="' + id + '" title="Take back from ' + ticketLabel(id) + '">' + icon('x') + '</button></span>';
+					}).join('') + '</div>' : '') +
+					'</li>';
+			}).join('');
+		}
+
+		function renderAll() {
+			updateBoard();
+			renderNow();
+			renderRecent();
+			renderProgress();
+			renderControls();
+			renderPrizes();
+		}
+
+		/* ---------- calling ---------- */
+
+		function callNext() {
+			if (busy) return;
+			if (pending !== null) return reveal();
+			if (calls.length >= 90) return toast('All 90 elements have been called');
+
+			var remaining = [];
+			for (var i = 0; i < 90; i++) if (calls.indexOf(i) === -1) remaining.push(i);
+			var idx = remaining[randomInt(remaining.length)];
+			calls.push(idx);
+			redoStack = [];
+			save('history', calls);
+			clearTimeout(autoTimer);
+
+			if (settings.quiz) {
+				pending = idx;
+				renderAll();
+				speak('Who am I? ' + EL[idx].clue);
+				startQuizTimer();
+			} else {
+				land(idx, settings.animate);
+			}
+		}
+
+		function land(idx, withRoll) {
+			var finish = function () {
+				renderAll();
+				var tile = document.getElementById('nowTile');
+				void tile.offsetWidth;
+				tile.classList.add('land');
+				announce(idx);
+				scheduleAuto();
+			};
+			if (!withRoll || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return finish();
+
+			busy = true;
+			renderControls();
+			var tile = document.getElementById('nowTile');
+			var started = Date.now();
+			var spin = setInterval(function () {
+				if (Date.now() - started > 900) {
+					clearInterval(spin);
+					busy = false;
+					return finish();
+				}
+				paintTile(EL[randomInt(90)]);
+				tile.classList.add('rolling');
+			}, 60);
+		}
+
+		function startQuizTimer() {
+			clearTimeout(quizTimer);
+			var bar = document.querySelector('#quizTimer i');
+			bar.style.transition = 'none';
+			bar.style.width = '0';
+			if (!settings.quizDelay) return;
+			void bar.offsetWidth;
+			bar.style.transition = 'width ' + settings.quizDelay + 's linear';
+			bar.style.width = '100%';
+			quizTimer = setTimeout(reveal, settings.quizDelay * 1000);
+		}
+
+		function reveal() {
+			if (pending === null) return;
+			clearTimeout(quizTimer);
+			var idx = pending;
+			pending = null;
+			land(idx, false);
+		}
+
+		function repeat() {
+			if (pending !== null) return speak('Who am I? ' + EL[pending].clue);
+			var shown = revealed();
+			if (shown.length) announce(shown[shown.length - 1]);
+		}
+
+		function undo() {
+			if (busy) return;
+			if (!calls.length) return toast('Nothing to undo');
+			stopAuto();
+			clearTimeout(quizTimer);
+			var idx = calls.pop();
+			if (pending === idx) pending = null;
+			redoStack.push(idx);
+			save('history', calls);
+			renderAll();
+			toast('Took back ' + EL[idx].name + ' (' + EL[idx].symbol + ')', 'Redo', redo);
+		}
+
+		function redo() {
+			if (busy || pending !== null) return;
+			if (!redoStack.length) return toast('Nothing to redo');
+			var idx = redoStack.pop();
+			calls.push(idx);
+			save('history', calls);
+			renderAll();
+			toast('Put back ' + EL[idx].name + ' (' + EL[idx].symbol + ')');
+		}
+
+		/* ---------- auto-call ---------- */
+
+		function scheduleAuto() {
+			clearTimeout(autoTimer);
+			var bar = document.getElementById('autoBar');
+			bar.style.transition = 'none';
+			bar.style.width = '0';
+			if (!autoOn) return;
+			if (calls.length >= 90) return stopAuto();
+			void bar.offsetWidth;
+			bar.style.transition = 'width ' + settings.autoInterval + 's linear';
+			bar.style.width = '100%';
+			autoTimer = setTimeout(callNext, settings.autoInterval * 1000);
+		}
+
+		function toggleAuto() {
+			if (autoOn) return stopAuto();
+			if (calls.length >= 90) return toast('All 90 elements have been called');
+			autoOn = true;
+			renderControls();
+			if (pending === null) callNext();
+		}
+
+		function stopAuto() {
+			autoOn = false;
+			scheduleAuto();
+			renderControls();
+		}
+
+		/* ---------- claims & prizes ---------- */
+
+		function ticketHTML(ticket, calledSet, latest) {
+			var cells = ticket.grid.map(function (row) {
+				return row.map(function (z) {
+					if (!z) return '<div class="tc empty"></div>';
+					var el = EL[z - 1];
+					var cls = 'tc' + (calledSet[z - 1] ? ' hit' : '') + (z - 1 === latest ? ' latest' : '');
+					return '<div class="' + cls + '" style="--c:' + color(el) + '" title="' + el.name + '"><small>' + z + '</small>' + el.symbol + '</div>';
+				}).join('');
+			}).join('');
+			return '<div class="ticket"><div class="ticket-meta"><span>Ticket</span><span>' + ticketLabel(ticket.id) + '</span></div><div class="ticket-grid">' + cells + '</div></div>';
+		}
+
+		// Show "No. 17" rather than the full code, which would reveal the game code on a projector
+		function ticketLabel(id) {
+			var p = H.parseTicketId(id);
+			return p ? 'No. ' + ((p.strip - 1) * 6 + p.ticket) : id;
+		}
+
+		function renderClaim() {
+			var input = document.getElementById('claimInput');
+			var out = document.getElementById('claimResult');
+			var text = input.value.trim();
+			if (!text) { out.innerHTML = ''; return; }
+			var number = /^(?:no\.?|#)?\s*(\d{1,5})$/i.exec(text);
+			var ticket;
+			if (number) {
+				if (!settings.gameCode) {
+					out.innerHTML = '<p class="claim-error">Add today\'s game code in Settings to check tickets by number, or type the full ticket code.</p>';
+					return;
+				}
+				ticket = H.getTicketByNumber(settings.gameCode, parseInt(number[1], 10));
+			} else {
+				ticket = H.getTicket(text);
+			}
+			if (!ticket) {
+				out.innerHTML = '<p class="claim-error">Type the ticket number (like 17) or a full ticket code (like K7Q2-3-5).</p>';
+				return;
+			}
+			var warning = settings.gameCode && ticket.code !== settings.gameCode
+				? '<p class="claim-error">This ticket is from a different game code than the one in Settings.</p>'
+				: '';
+			var shown = revealed();
+			var calledSet = {};
+			shown.forEach(function (i) { calledSet[i] = true; });
+			var calledZ = shown.map(function (i) { return i + 1; });
+			var results = H.checkTicket(ticket.grid, calledZ);
+
+			var rows = results.map(function (r) {
+				var done = r.completedAt !== null;
+				var detail;
+				if (done) {
+					var el = EL[shown[r.completedAt - 1]];
+					var ago = shown.length - r.completedAt;
+					detail = 'Completed on call ' + r.completedAt + ' (' + el.symbol + ')' +
+						(ago > 0 ? ' · <span class="stale">' + ago + ' call' + (ago > 1 ? 's' : '') + ' ago</span>' : ' · just now');
+				} else {
+					detail = r.marked + ' of ' + r.need + ' marked';
+				}
+				var winners = prizes[r.key] || [];
+				var others = winners.filter(function (id) { return id !== ticket.id; });
+				if (others.length) detail += '<br>Also won by ' + others.map(ticketLabel).join(', ');
+				var action = '';
+				if (done && winners.indexOf(ticket.id) !== -1) action = '<span>Awarded</span>';
+				else if (done) action = '<button class="btn" data-award="' + r.key + '" data-ticket="' + ticket.id + '">' + (others.length ? 'Award too' : 'Award') + '</button>';
+				return '<li class="' + (done ? 'yes' : '') + '"><span class="mark">' + icon(done ? 'check' : 'x') + '</span>' +
+					'<div><b>' + r.label + '</b><span>' + detail + '</span></div>' + action + '</li>';
+			}).join('');
+
+			out.innerHTML = warning + ticketHTML(ticket, calledSet, shown[shown.length - 1]) + '<ul class="verdicts" style="margin-top:14px">' + rows + '</ul>';
+		}
+
+		function openClaim() {
+			stopAuto();
+			closeDialogs();
+			var dlg = document.getElementById('claimDialog');
+			dlg.showModal();
+			document.getElementById('claimHint').textContent = settings.gameCode
+				? 'Type the number printed on the ticket, or its full code. Auto-call pauses while this is open.'
+				: 'Type the full ticket code, or add the game code in Settings to check by number. Auto-call pauses while this is open.';
+			var input = document.getElementById('claimInput');
+			input.select();
+			renderClaim();
+		}
+
+		function award(key, ticketId) {
+			prizes[key] = prizes[key] || [];
+			if (prizes[key].indexOf(ticketId) === -1) prizes[key].push(ticketId);
+			save('chem-housie-prizes', prizes);
+			renderPrizes();
+			renderClaim();
+			var label = H.PATTERNS.find(function (p) { return p.key === key; }).label;
+			speak(label + ' goes to ticket number ' + ticketLabel(ticketId).replace('No. ', ''));
+			toast(label + ' awarded to ' + ticketLabel(ticketId));
+		}
+
+		/* ---------- misc ---------- */
+
+		var toastTimer = null;
+		function toast(text, actionLabel, action) {
+			var el = document.getElementById('toast');
+			var btn = document.getElementById('toastAction');
+			document.getElementById('toastText').textContent = text;
+			btn.hidden = !actionLabel;
+			btn.textContent = actionLabel || '';
+			btn.onclick = function () { el.classList.remove('show'); action(); };
+			el.classList.add('show');
+			clearTimeout(toastTimer);
+			toastTimer = setTimeout(function () { el.classList.remove('show'); }, 4000);
+		}
+
+		function closeDialogs() {
+			document.querySelectorAll('dialog[open]').forEach(function (d) { d.close(); });
+		}
+
+		function askReset() {
+			closeDialogs();
+			var n = calls.length;
+			var won = Object.keys(prizes).reduce(function (sum, key) { return sum + prizes[key].length; }, 0);
+			document.getElementById('resetText').textContent = n
+				? 'This clears all ' + n + ' calls' + (won ? ' and ' + won + ' awarded prize' + (won > 1 ? 's' : '') : '') + '. It can\'t be undone.'
+				: 'Nothing has been called yet, so there\'s nothing to lose.';
+			document.getElementById('resetDialog').showModal();
+		}
+
+		function resetGame() {
+			stopAuto();
+			clearTimeout(quizTimer);
+			calls = [];
+			redoStack = [];
+			prizes = {};
+			pending = null;
+			save('history', calls);
+			save('chem-housie-prizes', prizes);
+			if (window.speechSynthesis) speechSynthesis.cancel();
+			renderAll();
+			toast('New game, good luck!');
+		}
+
+		function applyTheme() {
+			if (settings.theme === 'auto') document.documentElement.removeAttribute('data-theme');
+			else document.documentElement.setAttribute('data-theme', settings.theme);
+		}
+
+		function saveSettings() {
+			save('chem-housie-settings', settings);
+		}
+
+		function setSetting(key, value) {
+			settings[key] = value;
+			saveSettings();
+			if (key === 'theme') applyTheme();
+			if (key === 'view' || key === 'label') buildBoard();
+			if (key === 'quiz' && !value && pending !== null) reveal();
+			if (key === 'autoInterval' && autoOn) scheduleAuto();
+			renderNow();
+			renderControls();
+		}
+
+		function syncSettingsForm() {
+			document.querySelectorAll('[data-setting]').forEach(function (input) {
+				var value = settings[input.dataset.setting];
+				if (input.type === 'checkbox') input.checked = !!value;
+				else input.value = value;
+			});
+		}
+
+		function toggleFullscreen() {
+			if (document.fullscreenElement) document.exitFullscreen();
+			else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+		}
+
+		/* ---------- wiring ---------- */
+
+		paintIcons(document);
+		applyTheme();
+		buildBoard();
+		renderAll();
+		syncSettingsForm();
+		fillVoices();
+		if (window.speechSynthesis) speechSynthesis.addEventListener('voiceschanged', fillVoices);
+
+		document.getElementById('callBtn').onclick = callNext;
+		document.getElementById('repeatBtn').onclick = repeat;
+		document.getElementById('undoBtn').onclick = undo;
+		document.getElementById('redoBtn').onclick = redo;
+		document.getElementById('autoBtn').onclick = toggleAuto;
+		document.getElementById('claimBtn').onclick = openClaim;
+		document.getElementById('settingsBtn').onclick = function () { syncSettingsForm(); document.getElementById('settingsDialog').showModal(); };
+		document.getElementById('helpBtn').onclick = function () { document.getElementById('helpDialog').showModal(); };
+		document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
+		document.getElementById('resetBtn').onclick = askReset;
+		document.getElementById('claimInput').addEventListener('input', renderClaim);
+
+		document.getElementById('resetDialog').addEventListener('close', function () {
+			if (this.returnValue === 'reset') resetGame();
+		});
+
+		document.querySelectorAll('[data-view]').forEach(function (b) {
+			b.onclick = function () { setSetting('view', b.dataset.view); };
+		});
+		document.querySelectorAll('[data-label]').forEach(function (b) {
+			b.onclick = function () { setSetting('label', b.dataset.label); };
+		});
+
+		document.querySelectorAll('[data-setting]').forEach(function (input) {
+			input.addEventListener('change', function () {
+				var key = input.dataset.setting;
+				var value = input.type === 'checkbox' ? input.checked : input.value;
+				if (['rate', 'quizDelay', 'autoInterval'].indexOf(key) !== -1) value = parseFloat(value);
+				if (key === 'gameCode') input.value = value = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+				setSetting(key, value);
+			});
+		});
+
+		document.addEventListener('click', function (e) {
+			var awardBtn = e.target.closest('[data-award]');
+			if (awardBtn) award(awardBtn.dataset.award, awardBtn.dataset.ticket);
+			var revokeBtn = e.target.closest('[data-revoke]');
+			if (revokeBtn) {
+				var key = revokeBtn.dataset.revoke;
+				var who = revokeBtn.dataset.ticket;
+				prizes[key] = prizes[key].filter(function (id) { return id !== who; });
+				if (!prizes[key].length) delete prizes[key];
+				save('chem-housie-prizes', prizes);
+				renderPrizes();
+				toast('Took the prize back from ' + ticketLabel(who),'Undo', function () { award(key, who); });
+			}
+		});
+
+		// clicking the backdrop closes a dialog
+		document.querySelectorAll('dialog').forEach(function (dlg) {
+			dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+			if (e.target.closest('input, select, textarea')) return;
+			if (document.querySelector('dialog[open]')) return;
+			var key = e.key.toLowerCase();
+			if ((key === ' ' || key === 'enter') && e.target.closest('button, a')) return;
+			var actions = {
+				' ': callNext,
+				'p': callNext,
+				'enter': callNext,
+				'o': repeat,
+				'z': undo,
+				'y': redo,
+				'a': toggleAuto,
+				'c': openClaim,
+				'r': askReset,
+				'f': toggleFullscreen,
+				'q': function () { setSetting('quiz', !settings.quiz); toast('Quiz mode ' + (settings.quiz ? 'on' : 'off')); },
+				'v': function () { setSetting('view', settings.view === 'table' ? 'board' : 'table'); },
+				'l': function () {
+					var order = ['symbol', 'number', 'name'];
+					setSetting('label', order[(order.indexOf(settings.label) + 1) % order.length]);
+				},
+				'?': function () { document.getElementById('helpDialog').showModal(); }
+			};
+			if (actions[key]) {
+				e.preventDefault();
+				actions[key]();
+			}
+		});
 	</script>
-	<div class="p-4">
-		<p id="Element" style="font-size: 30px;"></p>
-		<p id="no" style="font-size: 30px;"></p>
-	</div>
-	<div class="p-2 flex">
-		<button class="rounded-md px-8 py-3 font-bold text-xl bg-green-400 text-white" onclick="getnumber()">Get
-			No</button>
-		<button class="rounded-md px-8 py-3 font-bold text-xl bg-yellow-500 text-white ml-2"
-			onclick="repeatCurrentSymbol()">Repeat</button>
-		<ul class="ml-4 flex items-center text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200">
-			<li class="w-48 border-b border-gray-200 sm:border-b-0 sm:border-r">
-				<div class="flex items-center pl-3">
-					<input id="name" onclick="checkbox()" type="checkbox" checked value=""
-						class="w-5 h-5 text-green-600 bg-gray-100 rounded border-gray-300 focus:ring-green-500 focus:ring-2">
-					<label for="name" class="py-3 ml-2 w-full text-lg font-medium text-gray-900">Enable Name</label>
-				</div>
-			</li>
-			<li class="w-48 border-b border-gray-200 sm:border-b-0 sm:border-r">
-				<div class="flex items-center pl-3">
-					<input id="symbol" onclick="checkbox()" type="checkbox" checked value=""
-						class="w-5 h-5 text-green-600 bg-gray-100 rounded border-gray-300 focus:ring-green-500 focus:ring-2">
-					<label for="symbol" class="py-3 ml-2 w-full text-lg font-medium text-gray-900">Enable Symbol</label>
-				</div>
-			</li>
-		</ul>
-		<ul onclick="radio()"
-			class="ml-4 flex items-center text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200">
-			<li class="w-48 border-b border-gray-200 sm:border-b-0 sm:border-r">
-				<div class="flex items-center pl-3">
-					<input id="number" type="radio" value="number" name="list-radio"
-						class="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2">
-					<label for="number" class="py-3 ml-2 w-full text-lg font-medium text-gray-900">Number</label>
-				</div>
-			</li>
-			<li class="w-48 border-b border-gray-200 sm:border-b-0 sm:border-r">
-				<div class="flex items-center pl-3">
-					<input id="symbol" checked type="radio" value="symbol" name="list-radio"
-						class="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2">
-					<label for="symbol" class="py-3 ml-2 w-full text-lg font-medium text-gray-900">Symbol</label>
-				</div>
-			</li>
-			<li class="w-48 border-b border-gray-200 sm:border-b-0 sm:border-r">
-				<div class="flex items-center pl-3">
-					<input id="name" type="radio" value="name" name="list-radio"
-						class="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2">
-					<label for="name" class="py-3 ml-2 w-full text-lg font-medium text-gray-900">Names</label>
-				</div>
-			</li>
-		</ul>
-	</div>
-
-	<div style="width: 100%; display: table;">
-		<div style="display: table-row;">
-			<div id="1" style="display: table-cell;"></div>
-			<div id="11" style="display: table-cell;"></div>
-			<div id="21" style="display: table-cell;"></div>
-			<div id="31" style="display: table-cell;"></div>
-			<div id="41" style="display: table-cell;"></div>
-			<div id="51" style="display: table-cell;"></div>
-			<div id="61" style="display: table-cell;"></div>
-			<div id="71" style="display: table-cell;"></div>
-			<div id="81" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="2" style="display: table-cell;"></div>
-			<div id="12" style="display: table-cell;"></div>
-			<div id="22" style="display: table-cell;"></div>
-			<div id="32" style="display: table-cell;"></div>
-			<div id="42" style="display: table-cell;"></div>
-			<div id="52" style="display: table-cell;"></div>
-			<div id="62" style="display: table-cell;"></div>
-			<div id="72" style="display: table-cell;"></div>
-			<div id="82" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="3" style="display: table-cell;"></div>
-			<div id="13" style="display: table-cell;"></div>
-			<div id="23" style="display: table-cell;"></div>
-			<div id="33" style="display: table-cell;"></div>
-			<div id="43" style="display: table-cell;"></div>
-			<div id="53" style="display: table-cell;"></div>
-			<div id="63" style="display: table-cell;"></div>
-			<div id="73" style="display: table-cell;"></div>
-			<div id="83" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="4" style="display: table-cell;"></div>
-			<div id="14" style="display: table-cell;"></div>
-			<div id="24" style="display: table-cell;"></div>
-			<div id="34" style="display: table-cell;"></div>
-			<div id="44" style="display: table-cell;"></div>
-			<div id="54" style="display: table-cell;"></div>
-			<div id="64" style="display: table-cell;"></div>
-			<div id="74" style="display: table-cell;"></div>
-			<div id="84" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="5" style="display: table-cell;"></div>
-			<div id="15" style="display: table-cell;"></div>
-			<div id="25" style="display: table-cell;"></div>
-			<div id="35" style="display: table-cell;"></div>
-			<div id="45" style="display: table-cell;"></div>
-			<div id="55" style="display: table-cell;"></div>
-			<div id="65" style="display: table-cell;"></div>
-			<div id="75" style="display: table-cell;"></div>
-			<div id="85" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="6" style="display: table-cell;"></div>
-			<div id="16" style="display: table-cell;"></div>
-			<div id="26" style="display: table-cell;"></div>
-			<div id="36" style="display: table-cell;"></div>
-			<div id="46" style="display: table-cell;"></div>
-			<div id="56" style="display: table-cell;"></div>
-			<div id="66" style="display: table-cell;"></div>
-			<div id="76" style="display: table-cell;"></div>
-			<div id="86" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="7" style="display: table-cell;"></div>
-			<div id="17" style="display: table-cell;"></div>
-			<div id="27" style="display: table-cell;"></div>
-			<div id="37" style="display: table-cell;"></div>
-			<div id="47" style="display: table-cell;"></div>
-			<div id="57" style="display: table-cell;"></div>
-			<div id="67" style="display: table-cell;"></div>
-			<div id="77" style="display: table-cell;"></div>
-			<div id="87" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="8" style="display: table-cell;"></div>
-			<div id="18" style="display: table-cell;"></div>
-			<div id="28" style="display: table-cell;"></div>
-			<div id="38" style="display: table-cell;"></div>
-			<div id="48" style="display: table-cell;"></div>
-			<div id="58" style="display: table-cell;"></div>
-			<div id="68" style="display: table-cell;"></div>
-			<div id="78" style="display: table-cell;"></div>
-			<div id="88" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="9" style="display: table-cell;"></div>
-			<div id="19" style="display: table-cell;"></div>
-			<div id="29" style="display: table-cell;"></div>
-			<div id="39" style="display: table-cell;"></div>
-			<div id="49" style="display: table-cell;"></div>
-			<div id="59" style="display: table-cell;"></div>
-			<div id="69" style="display: table-cell;"></div>
-			<div id="79" style="display: table-cell;"></div>
-			<div id="89" style="display: table-cell;"></div>
-		</div>
-		<div style="display: table-row;">
-			<div id="10" style="display: table-cell;"></div>
-			<div id="20" style="display: table-cell;"></div>
-			<div id="30" style="display: table-cell;"></div>
-			<div id="40" style="display: table-cell;"></div>
-			<div id="50" style="display: table-cell;"></div>
-			<div id="60" style="display: table-cell;"></div>
-			<div id="70" style="display: table-cell;"></div>
-			<div id="80" style="display: table-cell;"></div>
-			<div id="90" style="display: table-cell;"></div>
-		</div>
-	</div>
-	</div>
-
-	<div data-dial-init class="fixed right-6 bottom-6 group">
-		<div id="speed-dial-menu-default" class="flex hidden flex-col items-center mb-4 space-y-2">
-			<button onclick="reset()" data-tooltip-target="tooltip-reset" data-tooltip-placement="left"
-				class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-				<img
-					src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAB0klEQVRYhe2WvUpjURSF11ELZYKNjRiiUQhiY+UTTDmCAUVF8AkUtRJ9FEE7QZEZITNg60NYWlgotv5NpTF+Fmdfjfnx3nOjWJgF4cDNWWuv87f3ltr47nAhk4GcpKKkSUl5STlJnZKuJJ1IOpZ04Jw7/1CXQBbYBh6JRxnYBbIfFXwKuDPxe+AAWABGgR9AN5AHZoE9mwNwC8xU6QAQGnwFqBj3EBhJwBkE/hjnCVhKZcBWXrHfepBzz1817hMwHWTAzjza9uDgVTprpnEdamAn2va0wau0DqtvaBJCDn/b75OceRONpqid29GAX5R/2yXn3FkaAyHoavDtl42ltKLOuaAE9wbAqe1WIbVIKwD+m4HMlxj4DAC9UXas/a/RJfwMDNh4+VUGJmyse1V1r+C9ZNHC7S7aeBQ7MySJJAFQAB7wZTq+RNfEbCkVAw74a1pbSUkRogKy2oKBTdO4AfpDDUzjS2kl1IStfIPXcj4ZQn45b2DZTIBvMoYS8AtAyTgVYDnEfF3nAszg2yvwFXIfmAeGgR4gA4wBi8Bvu3DRtidfeYypLL7RLBOPMrCV9MxD2/JBSXOSfkoal9Qn6VHShXySOZL0zzlXl/HaaKMZngHsOZ4nlYWx/AAAAABJRU5ErkJggg==">
-				<span class="sr-only">Reset</span>
-			</button>
-			<div id="tooltip-share" role="tooltip"
-				class="inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-				Reset
-				<div class="tooltip-arrow" data-popper-arrow></div>
-			</div>
-			<button onclick="undo()" data-tooltip-target="tooltip-undo" data-tooltip-placement="left"
-				class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-				<img
-					src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA1ElEQVRIie3RMS5EURTG8e9Nq5CoJZOIVjGlzgJYAbZhA6bUSkhsQUFiBRoStjClTmFCgvB+mmsyGc94U3v/6uac891/zr1JR0fHBIyw1VDfwBA3eMAHHnGLIwzaCuD5W4I+zlH7myusN91bTQvK8SXJYZKDJCulVie5S3KfZJxkKckgyWaSXpkZJ9mvqupy3gaz1DhD/5fMKk6mtnzHziKCYfOD/sju4rVknrDWVjD5kxaSbXyW3EVbwaKS05J5Q2+2eT1HMmopWMYx9trMd3T8F74AdhBP3SEGrMYAAAAASUVORK5CYII=">
-				<span class="sr-only">Undo</span>
-			</button>
-			<div id="tooltip-print" role="tooltip"
-				class="inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-				Undo
-				<div class="tooltip-arrow" data-popper-arrow></div>
-			</div>
-			<button onclick="redo()" data-tooltip-target="tooltip-redo" data-tooltip-placement="left"
-				class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-				<img style="transform: scaleX(-1);"
-					src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAA1ElEQVRIie3RMS5EURTG8e9Nq5CoJZOIVjGlzgJYAbZhA6bUSkhsQUFiBRoStjClTmFCgvB+mmsyGc94U3v/6uac891/zr1JR0fHBIyw1VDfwBA3eMAHHnGLIwzaCuD5W4I+zlH7myusN91bTQvK8SXJYZKDJCulVie5S3KfZJxkKckgyWaSXpkZJ9mvqupy3gaz1DhD/5fMKk6mtnzHziKCYfOD/sju4rVknrDWVjD5kxaSbXyW3EVbwaKS05J5Q2+2eT1HMmopWMYx9trMd3T8F74AdhBP3SEGrMYAAAAASUVORK5CYII=">
-				<span class="sr-only">Redo</span>
-			</button>
-			<div id="tooltip-download" role="tooltip"
-				class="inline-block absolute invisible z-10 py-2 px-3 w-auto text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip dark:bg-gray-700">
-				Redo
-				<div class="tooltip-arrow" data-popper-arrow></div>
-			</div>
-		</div>
-		<button type="button" data-dial-toggle="speed-dial-menu-default" aria-controls="speed-dial-menu-default"
-			aria-expanded="false"
-			class="flex justify-center items-center w-14 h-14 text-white bg-blue-700 rounded-full hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
-			<svg aria-hidden="true" class="w-8 h-8 transition-transform group-hover:rotate-45" fill="none"
-				stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
-				</path>
-			</svg>
-			<span class="sr-only">Open actions menu</span>
-		</button>
-	</div>
-
 </body>
 
 </html>
